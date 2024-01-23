@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise</title>
+</head>
+
+<body>
+    <ol>
+        <li>
+            <p><strong>Promise - </strong> A promise is an object which represents an eventual completion or failure of
+                an asynchronus operation. It has three state - pending, fulfilled and rejected. when we create
+                promise, it returns an object which status pending and a value of undefined. </p>
+        </li>
+        <li>
+            <p><strong>Why Promise - </strong> Before promise, callback functions were used for asynchronous
+                operations. The major problem with that is 1. If we chain multiple callback functions inside one
+                another it creates a piramid like structure which is called callback hell or piramid of doom.
+                2. Inversion of control. </p>
+            <p> A promise resolves only once and it is immutable. we can chain promise using .then</p>
+        </li>
+        <li>
+            <p><strong>Promise.all - </strong>Promise.all APi takes an iterable or we can say array of
+                promises and execute them parallely. It waits for all promise to resolve and returns an
+                array of result. If any promise is rejected, it immediately throws an error.</p>
+            <p>it is also known as fail fast and all or none.</p>
+        </li>
+
+        <li>
+            <p><strong>Promise.allSetteled - </strong>It is similar to Promise.all but the difference is that
+                even if a promise reject, it still wait for all other promises to settle and at the end it returns
+                an array with all results. So it is not going to throw an error and stop if any promise rejected.
+                It will wait for all to finish and settle.</p>
+        </li>
+
+
+        <li>
+            <p><strong>Promise.race -
+                </strong> It works like a race. So it will give the result of the promise
+                which settled first. No matter whether it is rejected or resolved.</p>
+        </li>
+
+        <li>
+            <p><strong>Promise.any -
+                </strong>it is first success seeking API. it waits for the first resolved
+                promise and return the result. If all promise rejected, it returns an agreegate error.
+                if you want to see all errors, do like this -
+                <code>.catch((err)=>{console.log(err.errors)})</code>
+            </p>
+        </li>
+    </ol>
+
+
+    <script>
+        // creating a program for coffeesho using promise
+
+        const coffeeshop = {
+            coffee: ['capachino', 'late'],
+            isOpen: true
+        }
+
+        function orderCoffee(coffeeName) {
+            let order = new Promise((resolve, reject) => {
+                if (coffeeName === 'capachino' || coffeeName === 'late') {
+                    resolve('order placed');
+                } else {
+                    const err = new Error(`${coffeeName} is not available now`);
+                    reject(err)
+                }
+            })
+            return order;
+        }
+
+        let placedOrder = orderCoffee('ed');
+        placedOrder.then((result) => {
+            console.log(result)
+        })
+            .catch((error) => {
+                console.log(error.message);
+            })
+
+
+        // code for promise API(promise.all, allSetteled, any, reace)
+
+        //lets create some dummy promises first
+        let p1 = new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve('p1 resolved')
+            },3000)
+        })
+
+        let p2 = new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                reject('p2 resolved')
+            },2000)
+        })
+
+        let p3 = new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve('p3 resolved')
+            },1000)
+        })
+
+        // lets test Promise.all with the above dummy promises
+
+        Promise.all([p1,p2,p3]).then((result)=>{
+            console.log(result)
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
+
+    </script>
+</body>
+
+</html>

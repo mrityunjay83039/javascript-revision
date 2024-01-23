@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function constructor and Inheritance</title>
+</head>
+<body>
+    
+<script>
+    
+
+    function Person(fname, lname, age){
+        this.fname = fname,
+        this.lname = lname,
+        this.age = age
+
+        this.greeting = function(){
+           return `hello ${fname}`
+        }
+    }
+
+    function Students(fname,lname,age,psp,batch){
+        Person.call(this,fname,lname,age)
+        this.psp = psp,
+        this.batch = batch
+    }
+
+
+
+
+
+    
+
+    let student1 = new Students('Mrityunjay','Mishra',27,81.00,'full stack')
+    console.log(student1.greeting())
+
+
+</script>
+</body>
+</html>

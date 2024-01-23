@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async Await</title>
+</head>
+
+<body>
+    <ol>
+        <li>
+            <p><strong>Asyn Function - </strong> Asyn function always return a promise. if you hava
+                a promise written inside the fun then it will return that. If its a simple code, it will
+                wrap that in a promise and then return it.</p>
+            <p>await can only be used inside async function</p>
+
+        </li>
+        <li>
+            <p><strong>How async and await works behind the scene - </strong>
+                whenever js engine see an await inside async function, it suspends the function execution from
+                callstack. once promise is resolved, that function will come again in call stack and execute
+                from where it left.
+            </p>
+        </li>
+        <li>
+            <p><strong>Error Handeling - </strong> We use try catch to handle error while using async and await
+                we can also use .catch as we were doing with Promise</p>
+        </li>
+    </ol>
+
+    <script>
+        // create asyn function and handle error using try catch
+
+        let p1 = new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                reject('Promise resolved after 2 sec');
+            },2000)
+        })
+
+        
+        async function Test(){
+            try {
+                console.log('asyn function resolved');
+                let data = await p1;
+                console.log(data)
+            } catch (error) {
+                console.error(error)
+            }
+            
+        }
+        Test()
+
+        
+        
+    </script>
+
+</body>
+
+</html>

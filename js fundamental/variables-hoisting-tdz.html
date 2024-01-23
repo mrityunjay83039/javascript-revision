@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables, TDZ, Hoisting</title>
+</head>
+
+<body>
+    <ol>
+        <li>
+            <p><strong>Variable - </strong>In JavaScript variables can be declared using
+                var, let and const. var is not the recommended way. it should be rarely used.
+            </p>
+
+        </li>
+        <li>
+            <p><strong>Difference Between Var, Let, Const - </strong>
+            <p><strong>Var</strong> - var has functional scope. Means it can be
+                accessed anywhere in the function it is defined. It can be re declared
+                and re assigned also.
+                If we declare a variable with var in global scope, mean not side in any function
+                it will work as global variable. <br>
+                The reason why it is not recommended is that, it can be re-declared and that can
+                be a problem if multiple developers working on the same project. <br>
+                ariables declared with var are hoisted to the top of their scope during the compilation phase, which
+                means you can use a variable before it's declared in the code.
+            </p>
+            </p>
+            <p><strong>Let - </strong>Let has block scope(enclosed by curly braces) . It is introduced in ES6.
+                We can not re-declare it but can re-assign. variables are hoisted to the top of their block but are not
+                initialized until the actual declaration is encountered during runtime.</p>
+
+            <p><strong>Const - </strong>Similar to let, const has block level scope.
+                it is used for variables that should not be reassigned after initialization.
+                 However, it does not make the variable itself immutable; it just prevents
+                  reassignment. variables are hoisted to the top of their block but are not initialized untill the
+                  actual declaration is encountered during run time.
+            </p>
+        </li>
+        <li>
+            <p><strong>Temporal Dead Zone - </strong>The Temporal Dead Zone (TDZ) in JavaScript refers to the period between the start of the scope and the point where a variable is declared. During this period, attempting to access the variable will result in a ReferenceError. This concept is associated with variables declared using let and const declarations.</p>
+        </li>
+        <li>
+            <p><strong>Hoisting - </strong>Whenever a code runs in javascript, it creates a global execution context
+            It has two phases, 1st Memory Allocation phase and the second is code execution phase.
+            <p>In memor excution phase, first all variables and functions are stored in main memory with key:value
+                pair. while storing the variables in main memory, first all variables are assigned a value 'undefined'. 
+                functions are stored with complete body. 
+            </p>
+            <p>So if we try to access a variable before its initialization, it will return undefined. It works 
+                same way for let and const also but because of the TDZ, it throw a reference error.
+            </p>
+        </p>
+        </li>
+    </ol>
+
+
+    <script>
+        // lets try to access var a outside of the function test.
+        // console.log(a);    // ReferenceError: a is not defined
+
+        function test(){
+            // try to see if var a is hoisted 
+            console.log(a);       // Output : undefined
+
+            var a = 9;
+            // try to access let and const outside of block. Here b and c are consoled outside the block scope.
+            // console.log(b);         // ReferenceError: b is not defined
+            // console.log(c);         // ReferenceError: c is not defined
+
+            if(a){
+
+                // console.log(b); // console b before declaration. Output: ReferenceError: Cannot access 'b' before initialization
+
+                let b = 10;
+                const c = 2;
+                // try to re-declare b and c 
+                // let b = 30;   // SyntaxError: Identifier 'b' has already been declared
+                // const c = 4;     // SyntaxError: Identifier 'c' has already been declared
+
+                // lets try to re-assign both b and c
+                b = 50;
+                // c = 100;           //TypeError: Assignment to constant variable.
+
+                console.log(b)        // Output: 50
+               
+            }
+        }
+
+        test()
+    </script>
+</body>
+
+</html>

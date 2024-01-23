@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execution Context, Event Loop</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center; text-decoration: underline;">Execution Context</h2>
+    <ol>
+        <li>
+            <p><strong>Execution Context - </strong> Execution context is a concept 
+            which represents an invironment in which javascript codes are executed. <br>
+                
+            Every execution context has 2 phase - 1st Memory allocation and second Code execution.
+            <br>
+        There are mainly two type of execution context - 1. Global Execution Context 
+    and 2. Functional Execution Context.</p>
+
+            
+        </li>
+        <li>
+            <p><strong>Global Execution Context - </strong> As soon as a javascript code 
+            starts running, a global execution context is created and added in the call stack 
+           or execution context. <br>
+           The outer most context is Global execution context. variables declared outside of 
+           functions are part of this context.
+
+        </p>
+        </li>
+        <li>
+            <p><strong>Functional Execution Context - </strong> in globa execution context,
+            while code execution, if any function invocation is found, a functional execution context
+           is crated. </p>
+           <img src="https://www.freecodecamp.org/news/content/images/2022/12/1.png" width="50%" style="margin:auto">
+        </li>
+    </ol>
+
+    <h2 style="text-align: center; text-decoration: underline;">Event loop, call stack and callback queue</h2>
+    
+    <p>javascript is single threaded and synchronous programming language. It means, it 
+        has only one execution stack which is also called as callstack to execute codes.
+        However, javascript also handle asynchronous functions. For that, it need to run 
+        all codes without blocking main thread. <br>
+        event loop helps to handle these asynchronous operations.
+
+    </p>
+    <div>
+        <img src="https://res.cloudinary.com/slawinski-dev/image/upload/v1648757381/javascript-runtime-environment.png" style="width: 40%;border: 1px solid #ddd;display: block;" alt="">
+    </div>
+    <ol>
+        <li>
+            <p><strong>Call Stack or Execution Stack - </strong>
+            call stack handles multiple execution contexts. so as soon as an execution context
+            is crated, it is pushed into the call stack. It is poped out after completion.
+            <br>
+            If we have multiple execution context inside one another, then it is stacked on 
+            top of each other in the call stack.
+            </p>
+        </li>
+        <li>
+            <p><strong>Callback Queue(Task Queue)- </strong> Callback queue is a queue data structure. 
+            Queue works on FIFO(First in First Out) concept. Whenever a callback function 
+            found in the code, it is registered in the Web API environment and time start as 
+            given. 
+            <br/>
+            As soon as timer finish and callback is ready to execute, it will be added in the 
+            callback queue.
+        </p>
+
+        </li>
+        <li>
+            <p><strong>Micro Task Queue - </strong>Similar to callback queue, all callback 
+            related to promises and mutation observer are added in Micro task queue. Micro task queue has high preority 
+            than the callback queue. 
+        </p>
+        </li>
+        <li>
+            <p><strong>Event Loop - </strong>Only taks of the event loop is that it keeps checking
+            callstack, micro task queue and callback queue. As soon as callstack is empty, it checks
+            for microtask queue first, it get callback and push it to callstack for execution. 
+
+            <br>
+            once micro task queue is empty, it will check the callback queue and start pushing 
+            callbacks one by one to callstack for execution. 
+            </p>
+        </li>
+    </ol>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Bubbling and Capturing</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+        .playground{
+            width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #grand-parent{
+            
+            border: 1px solid #ccc;
+            width: 400px;
+            height: 400px;
+            margin: auto;
+        }
+        #parent{
+            border: 1px solid #ccc;
+            width: 300px;
+            height: 300px;
+            margin: auto;
+        }
+        #child{
+            border: 1px solid #ccc;
+            width: 200px;
+            height: 200px;
+            margin: auto;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Event Handling</h1>
+    <p>Event listner accepts 3 parameters - <br>
+    1. Event Name - for example: click, mouseover,etc <br>
+    2. Callback Function - A callback function which executes on event <br>
+    3. useCapture flag -  it takes true/false. By default its false means bubbling. if you 
+    want to use capturing, then make it true.
+
+    </p>
+    <p>To stop event propogation, we can use <strong>event.stopPropagation()</strong></p>
+    <ol>
+        <li>
+            <p><strong>Event Bubbling - </strong>
+            event Bubbling is the concept where event flow from the clicked element to
+            upward direction through its ansesstors. Example - 
+            <pre>
+                document.querySelector('#child').addEventListener('click',function(){
+                    console.log('child clicked');
+                },false) // add false or leave blank
+            </pre>
+            </p>
+        </li>
+        <li>
+            <p><strong>Event Capturing - </strong>
+            In event capturing, event flow from root element to the click element. 
+            Example - 
+            <pre>
+                document.querySelector('#child').addEventListener('click',function(){
+                    console.log('child clicked');
+                },true)
+            </pre>
+            </p>
+        </li>
+    </ol>
+    <div class="playground">
+        <div id="grand-parent">
+            <strong>Grand Parent</strong>
+            <div id="parent">
+                <strong>Parent</strong>
+                <div id="child">
+                    <strong>Child</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.querySelector('#grand-parent').addEventListener('click',()=>{
+            console.log('grand parent clicked')
+        })
+
+        document.querySelector('#parent').addEventListener('click',()=>{
+            console.log('parent clicked')
+        })
+
+        document.querySelector('#child').addEventListener('click',()=>{
+            console.log('Child clicked')
+        })
+    </script>
+</body>
+</html>

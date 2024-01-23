@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Types</title>
+</head>
+<body>
+    <ol>
+        <li>
+            <p><strong>Data Types in JS - </strong>JavaScript is a dynamically-typed language,
+                which means we don't need to define data type of a variable while declaring it.
+                data type is assigned depending on value at run time. 
+
+            </p>
+            <p>However, javascript has many data types which can be categorised mainly in 
+                two category - 1. Primitive Data Type 2. Non Primitive(Object) Data Type
+            </p>
+        </li>
+        <li>
+            <p><strong>Primitive Data Type - </strong>
+            This is pass by value. Means if we assing one variable to other, it will copy 
+        the same value. For example - <br/>
+            <pre>
+                let a = 26, 
+                let b;
+                b=a;
+                console.log(b) // output will be 26
+            </pre>   
+        </p>
+        <p>Number, String, undefined, null, Boolean and Symbol are primitive data types. 
+            Symbol is introduced in ES6, symbols are unique and immutable data types.
+        </p>
+        </li>
+
+        <LI>
+            <P><STRONG>Non-Primitive(Object) Data Type - </STRONG>Non-primitive are pass
+            by reference. Means variables are stored in the main memory while values 
+        are stored in the heap memory. Both variable and values are connected to pointer.
+           So if we assing one variable to other, it only assign the pointer, don't copy
+        the value</P>
+        <p>Object, Array and functions are non-primitive data type</p>
+        </LI>
+    </ol>
+</body>
+</html>

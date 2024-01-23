@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debouncing and Throttling</title>
+    <style>
+      * {
+        text-size-adjust: 100%;
+        font-feature-settings: normal;
+        font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue",
+          Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+          "Noto Color Emoji";
+        font-variation-settings: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Debouncing and Throttling</h1>
+    <p>
+      It is used for performance optimization. it can be used where we have
+      frequent events like resizing, input events or scrolling.
+      <br />
+      It is used to control the rate at which a particular function is executed.
+    </p>
+    <ol>
+      <li>
+        <p>
+          <strong
+            >Debouncing - </strong>
+            In Debouncing we set a particular time, if no event is
+            triggered within the time, function will be called.
+            <br />
+            So what it does is, it will not contineously call the function if
+            event is triggering frequently. It will call the fun only if event
+            is not triggered till the time set.
+          
+        </p>
+      </li>
+      <li>
+        <p>
+          <strong>Throttling - </strong>
+          In Throttling, instead of waiting for a particular time to call the
+          function, we call function on a specific interval if contineous even
+          triggering is happening.
+        </p>
+      </li>
+    </ol>
+
+    <p>
+      => Use debouncing when you want to delay the execution of a function until a
+      pause in events occurs. <br>
+      => Use throttling when you want to limit the rate at
+      which a function is executed, ensuring it doesn't happen more frequently
+      than a specified interval.
+    </p>
+  </body>
+</html>

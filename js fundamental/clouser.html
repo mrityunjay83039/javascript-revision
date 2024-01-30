@@ -1,13 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clouser</title>
+    <style>
+        * {
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue",
+                Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+                "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Clouser</h1>
-    <p>Function along with its lexical scope forms a clouser.</p>
+    <h1>Closure</h1>
+    <p>Function along with its lexical scope forms a closure. or in another word -
+        A closure is a function having access to the parent scope, even after the parent
+        function has closed.
+    </p>
     <p>Clouser is used in - currying, memoize, state in the async, setTimeout</p>
+    <pre style="padding: 20px; border:1px solid #ddd; width: 50%; font-size: 1.2rem; font-weight: 500;">
+        function fn1(){
+            let a = 20;
+            return function fn2(){
+                console.log(a);
+            }
+        }
+
+        let fn2 = fn1();   // here i returned the function fn2 out of function fn1. it has functin
+                            // definition of fn2. 
+        fn2()  
+    </pre>
+
+    <p><strong>Lexical Scope - </strong>
+        Lexical scope is the ability for a function to access variables from its parent scope.
+    <pre style="padding: 20px; border:1px solid #ddd; width: 50%; font-size: 1.2rem; font-weight: 500;">
+            Example of lexical scope - <br>
+            function x(){
+                let a = 10;
+    
+                function y(){
+                    console.log(a)   // output: 10
+                    let b = 5;
+    
+                    function z(){
+                        console.log(a+b); // output: 15
+                    }
+                    z()
+                }
+                y()
+            }
+            x()
+        </pre>
+    </p>
+
+    <script>
+        // example of lexical scope
+        function x() {
+            let a = 10;
+
+            function y() {
+                console.log(a)   // output: 10
+                let b = 5;
+
+                function z() {
+                    console.log(a + b); // output: 15
+                }
+                z()
+            }
+            y()
+        }
+        x()
+
+        // example of closure
+
+        function fn1(){
+            let a = 20;
+            return function fn2(){
+                console.log(a);
+            }
+        }
+
+        let fn2 = fn1();   // here i returned the function fn2 out of function fn1. it has functin
+                            // definition of fn2. 
+        fn2()              //now when i call the fn2, it wll still have the value of a:20
+
+        /**
+         * 
+         * One use of closure is currying functions. let see -
+         * 
+         * */
+
+        // currying functions takes only one argument at a time.
+        function add(a){
+            return function x(b){
+                return function y(c){
+                    return a+b+c;
+                }
+            }
+        }
+
+        let sum = add(2)(3)(4);
+        console.log('currying sum - '+ sum)
+
+        /**
+         * Q.- create a function if sum passed, it add next two arguments
+         *     if subtract pass, subtract those and similarly for multiply and division
+         * 
+         * Example - add('sum')(2)(3) // output: 5
+         *           add('substract')(5)(3) // output: 2
+         *          add('multiply')(2)(3) // output: 6
+         *          add('divide')(10)(5) // output: 2
+         * 
+         * */
+
+         function add(operation){
+            return function x(a){
+                return function y(b){
+                    if(operation === 'sum'){
+                        return a+b
+                    }else if(operation === 'substract'){
+                        return a-b;
+                    }else if(operation === 'multiply'){
+                        return a*b;
+                    }else if(operation === 'divide'){
+                        return a/b;
+                    }
+                }
+            }
+         }
+
+         let result = add('multiply')(3)(4);
+         console.log('currying question first-  '+result) // output: 12
+
+    </script>
+
 </body>
+
 </html>

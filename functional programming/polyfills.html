@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<script>
+
+// Polyfill of map function 
+/****
+ * 1. it takes an array
+ * 2. it returns an array
+ * 3. runs a callback function for each element of the array
+ * ****/
+Array.prototype.myMap = function(callback){
+    let res = [];
+    for(let i=0; i<this.length; i++){
+        let op = callback(this[i]);
+        res.push(op);
+    }
+
+    return res;
+}
+
+// Polyfill of filter function 
+/****
+ * 1. it takes an array
+ * 2. it returns an array
+ * 3. runs a callback function for each element of the array
+ * ****/
+
+Array.prototype.myFilter = function(callback){
+    let res = [];
+    for(let i=0; i<this.length; i++){
+        if(callback(this[i])){
+            res.push(this[i]);
+        }
+    }
+    return res;
+}
+
+
+// Polyfill of forEach function 
+/****
+ * 1. it takes an array
+ * 2. it returns element one by one
+ * 3. runs a callback function for each element of the array
+ * ****/
+Array.prototype.myForEach = function(callback){
+
+    for(let i=0; i<this.length; i++){
+        callback(this[i]);
+    }
+}
+
+// Polyfill of reduce function 
+/****
+ * 1. it takes an array
+ * 2. it returns a single element
+ * 3. runs a callback function for each element of the array
+ * 4. it takes an initial value which is optional
+ * 5. in the callback it takes - accumulator and current value
+ * ****/
+
+Array.prototype.myReduce = function(callback, initial){
+    let acc;
+    let firstIdx;
+
+    if(arguments.length === 1){
+        acc = this[0];
+        firstIdx = 1;
+    }else{
+        acc = initial;
+        firstIdx = 0
+    }
+
+    for(let i=firstIdx; i<this.length; i++){
+        acc = callback(acc,this[i]);
+    }
+
+    return acc;
+}
+
+// Polyfill of call function 
+/****
+ * 1. it takes an object, arguments as iterable
+ * 2. it call the functions for provided object
+ * ****/
+
+Function.prototype.myCall = function(context={}, ...args){
+    if(typeof this !== 'function'){
+        throw new Error(this+'is not callable');
+    }
+    context.fn = this;
+    context.fn(...args)
+}
+
+// Polyfill of apply function 
+/****
+ * 1. it takes an object,
+ * 2. it takes array as argument
+ * 3. it call the functions for provided object
+ * ****/
+
+Function.prototype.myApply = function(context={}, arg=[]){
+    if(typeof this !== 'function'){
+        throw new Error(this+' is not callable')
+    }
+    if(!Array.isArray(arg)){
+        throw new Error(arg + ' is not an array');
+    }
+
+    context.fn = this;
+    context.fn(...arg)
+}
+
+// Polyfill of bind function 
+/****
+ * 1. it takes an object,
+ * 2. it takes multiple arguments
+ * 3. it returns a function binded with the object
+ * ****/
+
+ Function.prototype.myBind = function(context = {}, ...args) {
+    if (typeof this !== 'function') {
+        throw new Error(this + ' is not callable');
+    }
+
+    const originalFunction = this;
+
+    return function (...args2) {
+        return originalFunction.apply(context, [...args,...args2]);
+    };
+};
+
+// Polyfill of promise.all function 
+/****
+ * 1. it takes an an array of promise,
+ * 2. if all promises are resolved, it returns array with output
+ * 3. if any promise rejects, it returns error with rejected promise
+ * ****/
+
+Promise.myAll = function(promiseArr){
+    if(!Array.isArray(promiseArr)){
+        throw new Error(promiseArr + ' is not an array');
+    }
+
+    return new Promise((resolve, reject)=>{
+        let result = [];
+        let count = 0;
+
+        for(let i=0; i<promiseArr.length; i++){
+            promiseArr[i].then((data)=>{
+                result[i] = data;
+                count++;
+
+                if(count === promiseArr.length){
+                    resolve(result);
+                }
+
+            }).catch((error)=>{
+                reject(error);
+            })
+        }
+
+        if(promiseArr.length === 0){
+            resolve(result)
+        }
+    })
+}
+
+let p1 = new Promise((resolve, reject)=>{
+    resolve('first promise resolved');
+})
+let p2 = new Promise((resolve, reject)=>{
+    resolve('second promise resolved');
+})
+let p3 = new Promise((resolve, reject)=>{
+    resolve('third promise resolved');
+})
+
+Promise.myAll([]).then((data)=>{
+    console.log(data)
+}).catch(err=>{
+    console.error(err)
+})
+
+
+</script>
+</body>
+</html>

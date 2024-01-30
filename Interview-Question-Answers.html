@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Question Ansers</title>
+    <style>
+        * {
+          text-size-adjust: 100%;
+          font-feature-settings: normal;
+          font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+            Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue",
+            Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+            "Noto Color Emoji";
+          font-variation-settings: normal;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <h1>COMMON JAVASCRIPT INTERVIEW QUESTIONS</h1>
+        <ol>
+            <li>
+                <p>
+                    <strong>What are the different data types in JavaScript?</strong>
+                </p>
+                <p>In JavaScript we have mainly two types of data type - 
+                    1. Primitive Data Types   and 2. Non-primitive Data Type or Object
+                    <br>
+                    Primitive Data Types - Primitive data types are passed by value. pass by value 
+                    means, if we try to copy value of a Primitive data type variable in another
+                    variable, we can do like this 
+                    <pre>
+                        let a = 3;
+                        let b = a;
+                        b= 5;
+                        console.log(a) // output : 3
+                        console.log(b) // output : 5
+                    </pre>
+                    Now if we try to change value of b as b=5, it will only change value of b not a.
+                    <br>
+                    Reason behind pass by value is - both variable and its value is present in 
+                    main memory.
+                    <br>
+                    Non Primitive Data Type : 
+                </p>
+
+
+            </li>
+        </ol>
+    </section>
+    
+    <script>
+    // Write a function that checks if a given string is a palindrome.
+
+    function checkPalindrom(str){
+        let reversedStr = str.split('').reverse().join('');
+        if(str===reversedStr){
+            return true;
+        }
+        return false;
+    }
+    checkPalindrom('mamat')
+
+
+    // Write a program that prints the numbers from 1 to 100. But for multiples of three,
+    // print "Fizz" instead of the number, and for the multiples of five, print "Buzz."
+    // For numbers that are multiples of both three and five, print "FizzBuzz."
+
+    function fizzBuzz(){
+        for(let i=1; i<=100; i++){
+            if(i%5 === 0 && i%3 === 0){
+                console.log('fizzBuzz')
+
+            }else if(i%5 === 0){
+                console.log('Buzz')
+
+            }else if(i%3 === 0){
+                console.log('Fizz')
+            
+            }else{
+                console.log(i)
+            }
+        }
+    }
+    fizzBuzz()
+
+
+    // Write a function to calculate the factorial of a given number.
+
+    // https://chat.openai.com/share/3e0fb47b-837a-4d52-9a9b-7b1f385ee953
+
+    </script>
+</body>
+</html>

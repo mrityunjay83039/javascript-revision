@@ -15,9 +15,27 @@
         font-variation-settings: normal;
       }
     </style>
+    <script>
+
+      document.addEventListener('input', function(event){
+        let val = event.target.value;
+        let dval = debounce(event);
+        document.getElementById('normal').append(val)
+        document.getElementById('debounce').append(dval)
+        document.getElementById('throttle').append(val)
+      })
+    </script>
   </head>
   <body>
     <h1>Debouncing and Throttling</h1>
+    
+      <input id="input" type="text" placeholder="type here" style="width: 400px;">
+      <output>
+        <p id="normal"><strong>Normal</strong>: </p>
+        <p id="debounce"><strong>Debouncing</strong>: </p>
+        <p id="throttle"><strong>Throttling</strong>: </p>
+      </output>
+    </form>
     <p>
       It is used for performance optimization. it can be used where we have
       frequent events like resizing, input events or scrolling.
@@ -42,7 +60,7 @@
         <p>
           <strong>Throttling - </strong>
           In Throttling, instead of waiting for a particular time to call the
-          function, we call function on a specific interval if contineous even
+          function, we call function on a specific interval if contineous event
           triggering is happening.
         </p>
       </li>
@@ -55,5 +73,8 @@
       which a function is executed, ensuring it doesn't happen more frequently
       than a specified interval.
     </p>
+    
+
+    
   </body>
 </html>

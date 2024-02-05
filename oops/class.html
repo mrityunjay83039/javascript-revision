@@ -4,8 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classes</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+    </style>
 </head>
 <body>
+    <pre>
+//Creating class
+class Person{
+    constructor(fname,lname,age,occupation){
+        this.fname = fname,
+        this.lname = lname,
+        this.age = age,
+        this.occupation = occupation
+    }
+    walk(){
+        console.log(`${this.fname} ${this.lname} is walking`);
+    }
+
+    // Defining getter function 
+    get Fullname(){
+        console.log(`Full Name -> ${this.fname} ${this.lname}`)
+    }
+
+    // Defining setter function
+    set newAge(age){
+        this.age = age;
+    }
+}
+
+// creating object
+let Mrityunjay = new Person('Mrityunjay','Mishra',28, 'web developer');
+
+console.log(Mrityunjay.age)
+Mrityunjay.Fullname;
+
+Mrityunjay.newAge = 27;
+console.log(Mrityunjay.age)
+
+// Inheritance of class
+
+class Students extends Person{
+    constructor(fname,lname,age,occupation,psp,batch){
+        super(fname,lname,age,occupation);
+        this.psp = psp;
+        this.batch = batch;
+    }
+}
+
+let student1 = new Students('Mukesh','Singh',28, null, 99.00, 'fullstack')
+console.log(student1)
+student1.walk()
+
+
+    </pre>
    
     
 <script>

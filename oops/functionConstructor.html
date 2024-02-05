@@ -4,8 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>function constructor and Inheritance</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+    </style>
 </head>
 <body>
+    <pre>
+        function Person(fname, lname, age){
+            this.fname = fname,
+            this.lname = lname,
+            this.age = age
+    
+            this.greeting = function(){
+               return `hello ${fname}`
+            }
+        }
+    
+        function Students(fname,lname,age,psp,batch){
+            Person.call(this,fname,lname,age)
+            this.psp = psp,
+            this.batch = batch
+        }
+    
+        let student1 = new Students('Mrityunjay','Mishra',27,81.00,'full stack')
+        console.log(student1.greeting())
+    </pre>
     
 <script>
     
@@ -25,12 +53,6 @@
         this.psp = psp,
         this.batch = batch
     }
-
-
-
-
-
-    
 
     let student1 = new Students('Mrityunjay','Mishra',27,81.00,'full stack')
     console.log(student1.greeting())

@@ -3,10 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Important Polyfills</title>
 </head>
 <body>
-    
+    <h1>Important Polyfills</h1>
+
+    <ol>
+        <li><h2>Polyfill of map function </h2>
+        <p> 1. it takes an array <br>
+            2. it returns an array <br>
+            3. runs a callback function for each element of the array</p>
+        </li>
+        <pre>
+            <code>
+                Array.prototype.myMap = function(callback){
+                    let res = [];
+                    for(let i=0; i<(this.length); i++){
+                        let op = callback(this[i]);
+                        res.push(op);
+                    }
+                
+                    return res;
+                }
+            </code>
+        </pre>
+
+        <li><h2>Polyfill of filter function </h2>
+            <p> 
+                1. it takes an array
+  2. it returns an array
+  3. runs a callback function for each element of the array
+            </p>
+            </li>
+            <pre>
+                <code>
+                    Array.prototype.myFilter = function(callback){
+                        let res = [];
+                        for(let i=0; i<(this.length); i++){
+                            if(callback(this[i])){
+                                res.push(this[i]);
+                            }
+                        }
+                        return res;
+                    }
+                </code>
+            </pre>
+        
+    </ol>
 <script>
 
 // Polyfill of map function 

@@ -469,15 +469,91 @@ function sleep() {
 nightTime('Good Night', sleep)
 
 
-// Creating callback hell
+// Simulated async functions using callbacks
+function getUser(id, callback) {
+    setTimeout(() => {
+        console.log("Fetched user:", id);
+        callback({ id: id, name: "Mrityunjay" });
+    }, 1000);
+}
 
-createOrder(cart, function (orderId) {
-    proceedPayment(orderId, function (paymentInfo) {
-        proceedOrder(paymentInfo, function () {
-            updateBalance();
-        })
+function getPosts(userId, callback) {
+    setTimeout(() => {
+        console.log("Fetched posts for userId:", userId);
+        callback([
+            { id: 1, title: "JavaScript Revision" },
+            { id: 2, title: "Understanding Closures" }
+        ]);
+    }, 1000);
+}
+
+function getComments(postId, callback) {
+    setTimeout(() => {
+        console.log("Fetched comments for postId:", postId);
+        callback(["Great explanation!", "Very helpful article!"]);
+    }, 1000);
+}
+
+// Creating Callback Hell (Pyramid of Doom)
+getUser(101, (user) => {
+    getPosts(user.id, (posts) => {
+        getComments(posts[0].id, (comments) => {
+            console.log("First comment on latest post:", comments[0]);
+        });
+    });
+});
+
+// -------------------------------------------------------------
+// How to fix Callback Hell:
+// -------------------------------------------------------------
+
+// Step A: Convert the operations to return Promises
+function getUserPromise(id) {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve({ id: id, name: "Mrityunjay" }), 1000);
+    });
+}
+
+function getPostsPromise(userId) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve([
+                { id: 1, title: "JavaScript Revision" },
+                { id: 2, title: "Understanding Closures" }
+            ]);
+        }, 1000);
+    });
+}
+
+function getCommentsPromise(postId) {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(["Great explanation!", "Very helpful article!"]), 1000);
+    });
+}
+
+// Solution 1: Fixing Callback Hell using Promise Chaining
+getUserPromise(101)
+    .then((user) => getPostsPromise(user.id))
+    .then((posts) => getCommentsPromise(posts[0].id))
+    .then((comments) => {
+        console.log("First comment on latest post:", comments[0]);
     })
-})
+    .catch((error) => {
+        console.error(error);
+    });
+
+// Solution 2: Modern fix using Async / Await
+async function displayLatestComment() {
+    try {
+        const user = await getUserPromise(101);
+        const posts = await getPostsPromise(user.id);
+        const comments = await getCommentsPromise(posts[0].id);
+        console.log("First comment on latest post:", comments[0]);
+    } catch (error) {
+        console.error(error);
+    }
+}
+// displayLatestComment();
 ```
 
 ---

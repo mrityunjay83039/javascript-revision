@@ -16,14 +16,50 @@
       }
     </style>
     <script>
+      // Debounce implementation: executes only after user pauses typing for 'delay' ms
+      function debounce(callback, delay = 500) {
+        let timer;
+        return function (...args) {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            callback.apply(this, args);
+          }, delay);
+        };
+      }
+
+      // Throttle implementation: executes at most once every 'limit' ms interval
+      function throttle(callback, limit = 500) {
+        let lastRan = 0;
+        return function (...args) {
+          let now = Date.now();
+          if (now - lastRan >= limit) {
+            callback.apply(this, args);
+            lastRan = now;
+          }
+        };
+      }
+
+      // Create debounced and throttled update functions (closures maintain state across events)
+      const updateDebounce = debounce(function (val) {
+        document.getElementById('debounce').innerHTML = `<strong>Debouncing</strong>: ${val}`;
+      }, 500);
+
+      const updateThrottle = throttle(function (val) {
+        document.getElementById('throttle').innerHTML = `<strong>Throttling</strong>: ${val}`;
+      }, 500);
 
       document.addEventListener('input', function(event){
         let val = event.target.value;
-        let dval = debounce(event);
-        document.getElementById('normal').append(val)
-        document.getElementById('debounce').append(dval)
-        document.getElementById('throttle').append(val)
-      })
+
+        // Normal: updates immediately on every keystroke
+        document.getElementById('normal').innerHTML = `<strong>Normal</strong>: ${val}`;
+
+        // Debounced: updates after pause in typing
+        updateDebounce(val);
+
+        // Throttled: updates at regular intervals while typing
+        updateThrottle(val);
+      });
     </script>
   </head>
   <body>

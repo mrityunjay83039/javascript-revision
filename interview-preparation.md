@@ -124,8 +124,8 @@ function fn(){
    - **B. BigInt -** Introduced in ES2020, BigInt is a special numeric type in JavaScript that can represent whole numbers of arbitrary size—beyond the limits of the standard Number type (`Number.MAX_SAFE_INTEGER`). You create BigInt values by appending `n` to an integer literal or by calling the `BigInt()` function.
    - **C. `typeof null` -** The `typeof null` returning `'object'` is a long-standing bug in JavaScript. It was introduced in the early days of the language and has been maintained for backward compatibility. It does not reflect the actual internal structure of `null`, which is a primitive value.
    - **D. `typeof undefined` -** The `typeof undefined` returning `'undefined'` is correct. Undefined is a primitive data type in JavaScript. It is used to represent the absence of a value.
-   - **E. `typeof BigInt` -** The `typeof BigInt` returning `'bigint'` is correct. BigInt is a primitive data type in JavaScript. It is used to represent the absence of a value.
-   - **F. `typeof Symbol` -** The `typeof Symbol` returning `'symbol'` is correct. Symbol is a primitive data type in JavaScript. It is used to represent the absence of a value.
+   - **E. `typeof BigInt` -** The typeof operator returning 'bigint' is correct. BigInt is a primitive data type in JavaScript used to represent integers with arbitrary precision that are too large to be represented by the normal Number data type
+   - **F. `typeof Symbol` -** typeof operator returning 'symbol' is correct. Symbol is a primitive data type in JavaScript used to create unique and immutable identifiers for object properties.
    - **G. Auto-boxing -** Primitives don't have methods, yet you can call methods on them (like `"hello".toUpperCase()`). When you do this, JavaScript temporarily wraps (auto-boxes) the primitive value into its corresponding Object wrapper, runs the method, and then discards the wrapper.
 
 3. **Non-Primitive(Object) Data Type -** Non-primitive are pass by reference. Means variables are stored in the main memory while values are stored in the heap memory. Both variable and values are connected to pointer. So if we assing one variable to other, it only assign the pointer, don't copy the value.
@@ -382,13 +382,50 @@ It is used to control the rate at which a particular function is executed.
 
 ### Code:
 ```javascript
-document.addEventListener('input', function(event){
+// Debounce implementation: executes only after user pauses typing for 'delay' ms
+function debounce(callback, delay = 500) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback.apply(this, args);
+    }, delay);
+  };
+}
+
+// Throttle implementation: executes at most once every 'limit' ms interval
+function throttle(callback, limit = 500) {
+  let lastRan = 0;
+  return function (...args) {
+    let now = Date.now();
+    if (now - lastRan >= limit) {
+      callback.apply(this, args);
+      lastRan = now;
+    }
+  };
+}
+
+// Create debounced and throttled update functions (closures maintain state across events)
+const updateDebounce = debounce(function (val) {
+  document.getElementById('debounce').innerHTML = `<strong>Debouncing</strong>: ${val}`;
+}, 500);
+
+const updateThrottle = throttle(function (val) {
+  document.getElementById('throttle').innerHTML = `<strong>Throttling</strong>: ${val}`;
+}, 500);
+
+document.addEventListener('input', function (event) {
   let val = event.target.value;
-  let dval = debounce(event);
-  document.getElementById('normal').append(val)
-  document.getElementById('debounce').append(dval)
-  document.getElementById('throttle').append(val)
-})
+
+  // Normal: updates immediately on every keystroke
+  document.getElementById('normal').innerHTML = `<strong>Normal</strong>: ${val}`;
+
+  // Debounced: updates after pause in typing
+  updateDebounce(val);
+
+  // Throttled: updates at regular intervals while typing
+  updateThrottle(val);
+});
 ```
 
 ---

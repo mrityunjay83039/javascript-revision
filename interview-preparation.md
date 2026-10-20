@@ -118,7 +118,7 @@ console.log(b); // output will be 26
    console.log(sym1 === sym2); // false
    ```
 
-    ** Important Notes ** -
+    ***Important Notes -***
 
    A. In JavaScript, **null** behaves like a primitive value (e.g., undefined, string, number), but it is actually an **object**. This is widely recognized as a historical bug in the language that has never been fixed to avoid breaking existing code.
 

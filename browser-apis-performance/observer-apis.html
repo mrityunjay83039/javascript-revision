@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observer APIs: Intersection, Resize, Mutation</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+        .box { width: 200px; height: 100px; background: #e0e0e0; margin: 10px 0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Modern Browser Observer APIs</h1>
+
+    <p>Observer APIs asynchronously observe changes without polling or binding heavy scroll/resize event listeners, preventing layout thrashing and jank.</p>
+
+    <ol>
+        <li>
+            <h2>1. IntersectionObserver</h2>
+            <p>Asynchronously observes changes in the intersection of a target element with an ancestor element or top-level document's viewport.<br>
+            <strong>Top Use Cases:</strong> Image lazy-loading, Infinite scrolling (triggering next page fetch when bottom sentinel element enters viewport), and tracking ad viewability.</p>
+        </li>
+        <li>
+            <h2>2. ResizeObserver</h2>
+            <p>Invokes a callback whenever a target element's content rectangle or border-box changes size.<br>
+            <strong>Top Use Cases:</strong> Container queries, responsive component charts, dynamic sidebar adjustments without listening to window resize.</p>
+        </li>
+        <li>
+            <h2>3. MutationObserver</h2>
+            <p>Listens for direct mutations made to the DOM tree (child node additions/removals, attribute updates, text content modifications).<br>
+            <strong>Top Use Cases:</strong> Microfrontends, third-party script integrations, undo/redo systems, accessibility auditors.</p>
+        </li>
+    </ol>
+
+    <div id="target-box" class="box">Resize or mutate me!</div>
+    <div id="sentinel" style="height: 20px; background: #ddd; margin-top: 500px;">Sentinel element for Infinite Scroll</div>
+
+    <script>
+        // -------------------------------------------------------------
+        // 1. IntersectionObserver (Infinite Scroll / Lazy Loading)
+        // -------------------------------------------------------------
+        const sentinel = document.getElementById("sentinel");
+
+        const intersectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    console.log("Sentinel is visible in viewport! Fetching next page of items...");
+                    // fetchMoreItems();
+                }
+            });
+        }, {
+            root: null,         // Use browser viewport as container
+            rootMargin: "0px",  // Margin around root
+            threshold: 0.5      // Trigger when 50% of element is visible
+        });
+
+        intersectionObserver.observe(sentinel);
+
+
+        // -------------------------------------------------------------
+        // 2. ResizeObserver (Element Dimensions)
+        // -------------------------------------------------------------
+        const targetBox = document.getElementById("target-box");
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (let entry of entries) {
+                const { width, height } = entry.contentRect;
+                console.log(`Element resized -> Width: ${width}px, Height: ${height}px`);
+            }
+        });
+
+        resizeObserver.observe(targetBox);
+
+
+        // -------------------------------------------------------------
+        // 3. MutationObserver (DOM Tree Mutations)
+        // -------------------------------------------------------------
+        const mutationObserver = new MutationObserver((mutationsList, observer) => {
+            for (let mutation of mutationsList) {
+                if (mutation.type === "childList") {
+                    console.log("DOM child nodes were added or removed.");
+                } else if (mutation.type === "attributes") {
+                    console.log(`Attribute "${mutation.attributeName}" was modified.`);
+                }
+            }
+        });
+
+        mutationObserver.observe(targetBox, {
+            attributes: true,  // Watch attribute changes
+            childList: true,   // Watch additions/removals of children
+            subtree: true      // Watch descendants as well
+        });
+
+        // Trigger mutation test:
+        targetBox.setAttribute("data-state", "active");
+    </script>
+</body>
+</html>

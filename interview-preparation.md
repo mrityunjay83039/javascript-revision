@@ -10,18 +10,24 @@ This markdown file compiles all the revision notes, concepts, and code directly 
   - [1.2 Data Types (`data-types.html`)](#12-data-types)
   - [1.3 Execution Context & Event Loop (`execution-eventloop.html`)](#13-execution-context--event-loop)
   - [1.4 Closure (`clouser.html`)](#14-closure)
-  - [1.5 This Keyword (`this-keyword.md`)](#15-this-keyword)
-  - [1.6 Event Handling: Bubbling & Capturing (`event-handling.html`)](#16-event-handling-bubbling--capturing)
+  - [1.5 This Keyword & Explicit Binding (`call`, `apply`, `bind`) (`this-keyword.md`)](#15-this-keyword--explicit-binding-call-apply-bind)
+  - [1.6 Event Handling: Bubbling, Capturing & Event Delegation (`event-handling.html`)](#16-event-handling-bubbling-capturing--event-delegation)
   - [1.7 Debouncing & Throttling (`debouncing-throttling.html`)](#17-debouncing--throttling)
 - [2. Asynchronous JavaScript (`asynjs`)](#2-asynchronous-javascript-asynjs)
   - [2.1 CallBack (`callback.html`)](#21-callback)
   - [2.2 Promise (`promise.html`)](#22-promise)
   - [2.3 Async Await (`async-await.html`)](#23-async-await)
+  - [2.4 AbortController & Fetch API: Canceling Requests & Race Conditions (`abort-controller.html`)](#24-abortcontroller--fetch-api-canceling-in-flight-requests-and-handling-race-conditions)
 - [3. Functional Programming](#3-functional-programming)
-  - [3.1 Important Polyfills (`polyfills.html`)](#31-important-polyfills)
+  - [3.1 Higher-Order Functions (HOFs): Array Transformations & Immutability Methods (`hof-transformations.html`)](#31-higher-order-functions-hofs-array-transformations--immutability-methods)
+  - [3.2 Important Polyfills (`polyfills.html`)](#32-important-polyfills)
+  - [3.3 Metaprogramming & Advanced Primitives: Proxy, Reflect, Symbol, Iterators & Generators (`metaprogramming-iterators.html`)](#33-metaprogramming--advanced-primitives-proxy-reflect-symbol-iterators--generators)
 - [4. Object-Oriented Programming (`oops`)](#4-object-oriented-programming-oops)
   - [4.1 Function Constructor and Inheritance (`functionConstructor.html`)](#41-function-constructor-and-inheritance)
   - [4.2 Classes (`class.html`)](#42-classes)
+- [5. DOM, Browser APIs & Performance Optimization](#5-dom-browser-apis--performance-optimization)
+  - [5.1 Browser Storage & Web Workers (`storage-and-workers.html`)](#51-browser-storage--web-workers)
+  - [5.2 Observer APIs: Intersection, Resize & Mutation (`observer-apis.html`)](#52-observer-apis-intersection-resize--mutation)
 
 ---
 
@@ -295,7 +301,7 @@ console.log('currying sum - '+ sum)
 
 ---
 
-## 1.5 This Keyword
+## 1.5 This Keyword & Explicit Binding (`call`, `apply`, `bind`)
 *Source file: `js fundamental/this-keyword.md`*
 
 ### # This in Global Space
@@ -323,7 +329,63 @@ function test(){
 
 ---
 
-## 1.6 Event Handling: Bubbling & Capturing
+### ## Explicit Binding: `call()`, `apply()`, and `bind()`
+
+In JavaScript, `call`, `apply`, and `bind` are built-in methods on `Function.prototype` used to explicitly control and set what the `this` keyword refers to inside a function. This technique is often referred to as **Function Borrowing**.
+
+#### 1. `call()`
+- **Concept:** Invokes the function immediately, binding `this` to the passed object. Arguments are passed **individually** (comma-separated).
+- **Syntax:** `fn.call(thisContext, arg1, arg2, ...)`
+
+```javascript
+const person1 = {
+    fname: "Mrityunjay",
+    lname: "Mishra"
+};
+
+function printDetails(hometown, state) {
+    console.log(`${this.fname} ${this.lname} from ${hometown}, ${state}`);
+}
+
+// Function borrowing using call
+printDetails.call(person1, "Varanasi", "UP");
+// Output: Mrityunjay Mishra from Varanasi, UP
+```
+
+#### 2. `apply()`
+- **Concept:** Exactly the same as `call()`, invokes the function immediately with the bound `this` context, but arguments must be passed as an **Array** (or array-like object).
+- **Syntax:** `fn.apply(thisContext, [arg1, arg2, ...])`
+
+```javascript
+// Function borrowing using apply (arguments as array)
+printDetails.apply(person1, ["Varanasi", "UP"]);
+// Output: Mrityunjay Mishra from Varanasi, UP
+```
+
+#### 3. `bind()`
+- **Concept:** Does **NOT** invoke the function immediately. Instead, it returns a **brand new function** permanently bound to the specified `this` context and preset arguments, which can be called later.
+- **Syntax:** `const boundFn = fn.bind(thisContext, arg1, arg2, ...)`
+
+```javascript
+// Returns a new function copy with 'this' permanently bound
+const printLater = printDetails.bind(person1, "Varanasi", "UP");
+
+printLater(); 
+// Output: Mrityunjay Mishra from Varanasi, UP
+```
+
+#### Quick Comparison Table:
+| Method | Immediate Invocation? | Argument Passing | Return Value |
+| :--- | :--- | :--- | :--- |
+| **`call()`** | **Yes** | Individual comma-separated arguments (`arg1, arg2`) | Returns the result of the function execution |
+| **`apply()`** | **Yes** | Arguments bundled inside an Array (`[arg1, arg2]`) | Returns the result of the function execution |
+| **`bind()`** | **No** (Deferred) | Individual comma-separated arguments | Returns a **new function** bound to `this` |
+
+*(Note: Custom implementations for these methods are available under [Section 3.2: Important Polyfills](#32-important-polyfills): `myCall`, `myApply`, and `myBind`)*
+
+---
+
+## 1.6 Event Handling: Bubbling, Capturing & Event Delegation
 *Source file: `js fundamental/event-handling.html`*
 
 ### Notes:
@@ -348,8 +410,16 @@ document.querySelector('#child').addEventListener('click',function(){
 },true)
 ```
 
+3. **Event Delegation -** Attaching a single listener to a parent node to manage dynamic children efficiently.
+   - **How it works:** Instead of attaching event listeners to every individual child element, we attach a single listener to their common ancestor. Because of **Event Bubbling**, any event triggered on a child bubbles up to the parent.
+   - **Key Advantages:**
+     - **Memory Optimization:** 1 listener on the parent container instead of 1,000+ listeners on individual items.
+     - **Handles Dynamic Elements:** Elements added to the DOM dynamically (via AJAX, infinite scroll, or user actions) work automatically without needing new listeners attached.
+     - **Less Cleanup:** Fewer listeners reduce the risk of memory leaks when child nodes are removed.
+
 ### Code Example:
 ```javascript
+// Bubbling vs Capturing playground
 document.querySelector('#grand-parent').addEventListener('click',()=>{
     console.log('grand parent clicked')
 },true)
@@ -361,6 +431,20 @@ document.querySelector('#parent').addEventListener('click',()=>{
 document.querySelector('#child').addEventListener('click',()=>{
     console.log('Child clicked')
 })
+
+// -------------------------------------------------------------
+// Event Delegation Example
+// -------------------------------------------------------------
+// Attaching a single listener to the parent <ul> container
+document.querySelector('#item-list').addEventListener('click', (event) => {
+    // event.target is the actual clicked element
+    // event.target.closest('li') ensures clicks on nested <span> or <strong> tags still select the <li>
+    const listItem = event.target.closest('li');
+
+    if (listItem && event.currentTarget.contains(listItem)) {
+        console.log('Handled item click:', listItem.textContent, 'ID:', listItem.dataset.id);
+    }
+});
 ```
 
 ---
@@ -672,9 +756,208 @@ Test()
 
 ---
 
+## 2.4 AbortController & Fetch API: Canceling In-Flight Requests and Handling Race Conditions
+*Source file: `asynjs/abort-controller.html`*
+
+### Notes:
+1. **AbortController Overview -**
+   `AbortController` is a built-in browser Web API that allows you to abort one or more asynchronous Web operations (such as `fetch()` network requests) on demand.
+   - It exposes a `signal` property (`AbortSignal`) which is passed into the options of `fetch(url, { signal })`.
+   - Calling `controller.abort()` immediately cancels the request and causes the fetch promise to reject with a `DOMException` named `'AbortError'`.
+
+2. **Why is it critical in Modern Web Apps? -**
+   - **1. Canceling In-Flight Network Requests:** If a user navigates away from a page, closes a modal, or cancels an action, pending background requests waste network bandwidth, battery, and server resources unless canceled.
+   - **2. Preventing Race Conditions in Live Search / Autocomplete:**
+     - *The Problem:* A user types `"cat"` (Request A fired, slow network, takes 1500ms). The user then quickly types `"dog"` (Request B fired, fast network, resolves in 300ms). Request B finishes first and displays `"dog"` results. A moment later, slow Request A finishes and overwrites the UI with `"cat"` results!
+     - *The Solution:* Store the active `AbortController`. Before firing a new search request, abort the previous in-flight controller (`searchController.abort()`). Only the latest request is allowed to settle and update the UI.
+   - **3. Request Timeouts:** Automatically cancel requests that exceed a specified duration using `AbortSignal.timeout(ms)` or a fallback `setTimeout`.
+
+3. **Handling the Abort Error -**
+   When a fetch request is aborted, it rejects with `error.name === 'AbortError'`. Always check for this in the `catch` block so intentional cancellations are not logged as actual network failures:
+   ```javascript
+   catch (error) {
+       if (error.name === 'AbortError') {
+           console.log('Request was aborted intentionally');
+       } else {
+           console.error('Real network/runtime error:', error);
+       }
+   }
+   ```
+
+### Code:
+```javascript
+// Example 1: Basic Cancellation with AbortController
+let controller = new AbortController();
+
+async function fetchPosts() {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+            signal: controller.signal
+        });
+        const data = await response.json();
+        console.log('Data:', data);
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.log('Fetch request was aborted by the user.');
+        } else {
+            console.error('Fetch failed:', error);
+        }
+    }
+}
+
+// Cancel the request at any time:
+// controller.abort();
+
+
+// Example 2: Handling Race Conditions in Live Search / Autocomplete
+let searchController = null;
+
+async function handleSearch(query) {
+    // 1. Cancel previous pending request if still in-flight
+    if (searchController) {
+        searchController.abort();
+    }
+
+    // 2. Create fresh controller for the current request
+    searchController = new AbortController();
+
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts?q=${encodeURIComponent(query)}`, {
+            signal: searchController.signal
+        });
+        const results = await response.json();
+        console.log(`Results for "${query}":`, results);
+    } catch (err) {
+        if (err.name === 'AbortError') {
+            console.log(`Previous search request for "${query}" canceled.`);
+        } else {
+            console.error('Search error:', err);
+        }
+    }
+}
+
+
+// Example 3: Modern Request Timeout (ES2022+ AbortSignal.timeout)
+async function fetchWithTimeout(url, duration = 3000) {
+    try {
+        const response = await fetch(url, {
+            signal: AbortSignal.timeout(duration) // Automatically aborts after duration ms
+        });
+        return await response.json();
+    } catch (err) {
+        if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+            console.error('Request timed out after', duration, 'ms');
+        } else {
+            console.error('Network error:', err);
+        }
+    }
+}
+```
+
+---
+
 # 3. Functional Programming
 
-## 3.1 Important Polyfills
+## 3.1 Higher-Order Functions (HOFs): Array Transformations & Immutability Methods
+*Source file: `functional programming/hof-transformations.html`*
+
+### Notes:
+1. **Higher-Order Function (HOF) -**
+   A Higher-Order Function is a function that either takes one or more functions as arguments (callbacks), returns a function as its result, or does both.
+   - Built-in array methods like `map`, `filter`, `reduce`, `flatMap`, and `forEach` are classic HOFs.
+   - Utilities like `debounce` and `throttle` are also HOFs because they accept a function and return an optimized function.
+
+2. **Mastering Array Transformations -**
+   - **`map(callback)`:** Transforms every element in an array and returns a brand-new array of identical length without mutating the original.
+   - **`filter(callback)`:** Evaluates each element against a predicate function and returns a new array with items returning truthy.
+   - **`reduce(callback, initialValue)`:** Iterates through the array and accumulates values down to a single output (number, object, grouped arrays).
+   - **`flat(depth)`:** Flattens nested multi-dimensional arrays recursively up to the specified `depth` (default is 1; pass `Infinity` to deeply flatten arbitrary nesting).
+   - **`flatMap(callback)`:** Maps each element using a transformation function and then flattens the result by 1 level. More performant and concise than chaining `.map().flat()`.
+
+3. **Modern Immutability Methods (ES2023 / ES14) -**
+   - **The Mutation Trap:** Traditional methods like `sort()`, `reverse()`, and `splice()` mutate the original array in place. In functional programming and modern UI frameworks like React, mutating state directly causes missed re-renders and difficult-to-trace bugs.
+   - **The Non-Mutating Alternatives:**
+     - **`toSorted(compareFn)`:** Returns a sorted copy without altering the original array.
+     - **`toReversed()`:** Returns a reversed copy without altering the original array.
+     - **`toSpliced(start, deleteCount, ...items)`:** Returns a new copy with elements inserted, removed, or replaced without altering the original array.
+     - **`with(index, value)`:** Returns a new array with the element at `index` replaced by `value`.
+
+### Code:
+```javascript
+// -------------------------------------------------------------
+// 1. Array Transformations: map, filter, reduce
+// -------------------------------------------------------------
+const products = [
+    { id: 1, name: "Laptop", category: "Electronics", price: 60000 },
+    { id: 2, name: "Shirt", category: "Clothing", price: 1500 },
+    { id: 3, name: "Phone", category: "Electronics", price: 40000 },
+    { id: 4, name: "Jeans", category: "Clothing", price: 2500 }
+];
+
+// Pipeline: Filter electronics -> Apply 10% discount -> Sum total price
+const totalDiscountedElectronics = products
+    .filter(item => item.category === "Electronics")
+    .map(item => item.price * 0.9)
+    .reduce((total, price) => total + price, 0);
+
+console.log("Total discounted electronics:", totalDiscountedElectronics); // 90000
+
+
+// -------------------------------------------------------------
+// 2. flat() and flatMap()
+// -------------------------------------------------------------
+// flat: flattens multi-dimensional nested arrays
+const nested = [1, [2, [3, [4, 5]]]];
+console.log(nested.flat());          // [1, 2, [3, [4, 5]]] (depth 1)
+console.log(nested.flat(2));         // [1, 2, 3, [4, 5]]
+console.log(nested.flat(Infinity));  // [1, 2, 3, 4, 5] (deep flatten)
+
+// flatMap: transform each item and flatten by 1 level
+const orders = [
+    { orderId: 101, items: ["Laptop", "Mouse"] },
+    { orderId: 102, items: ["Keyboard"] },
+    { orderId: 103, items: ["Monitor", "HDMI Cable"] }
+];
+
+// Extracting all individual items across all orders into a single flat list:
+const allItems = orders.flatMap(order => order.items);
+console.log("All items flatMapped:", allItems);
+// Output: ["Laptop", "Mouse", "Keyboard", "Monitor", "HDMI Cable"]
+
+
+// -------------------------------------------------------------
+// 3. Immutability Methods (ES2023): toSorted, toReversed, toSpliced, with
+// -------------------------------------------------------------
+const numbers = [5, 2, 9, 1, 7];
+
+// --- A. toSorted() vs sort() ---
+// numbers.sort() mutates numbers!
+const sortedNumbers = numbers.toSorted((a, b) => a - b);
+console.log("toSorted:", sortedNumbers);             // [1, 2, 5, 7, 9]
+console.log("Original untouched:", numbers);         // [5, 2, 9, 1, 7]
+
+// --- B. toReversed() vs reverse() ---
+// numbers.reverse() mutates numbers!
+const reversedNumbers = numbers.toReversed();
+console.log("toReversed:", reversedNumbers);         // [7, 1, 9, 2, 5]
+console.log("Original untouched:", numbers);         // [5, 2, 9, 1, 7]
+
+// --- C. toSpliced() vs splice() ---
+// numbers.splice(1, 2, 99) mutates numbers!
+// toSpliced(startIndex, deleteCount, ...itemsToAdd)
+const splicedNumbers = numbers.toSpliced(1, 2, 99);
+console.log("toSpliced:", splicedNumbers);           // [5, 99, 1, 7]
+console.log("Original untouched:", numbers);         // [5, 2, 9, 1, 7]
+
+// --- D. with() for single element update ---
+const updatedNumbers = numbers.with(2, 999);
+console.log("with(index, val):", updatedNumbers);    // [5, 2, 999, 1, 7]
+console.log("Original untouched:", numbers);         // [5, 2, 9, 1, 7]
+```
+
+---
+
+## 3.2 Important Polyfills
 *Source file: `functional programming/polyfills.html`*
 
 ### 1. Polyfill of map function
@@ -860,6 +1143,118 @@ Promise.myAll([]).then((data)=>{
 
 ---
 
+## 3.3 Metaprogramming & Advanced Primitives: Proxy, Reflect, Symbol, Iterators & Generators
+*Source file: `functional programming/metaprogramming-iterators.html`*
+
+### Notes:
+
+#### 1. Metaprogramming with Proxy & Reflect
+- **What is Metaprogramming?** Writing code that inspects, intercepts, or modifies the language's fundamental runtime behaviors.
+- **`Proxy`:** Wraps a target object and intercepts internal operations through "traps" (e.g. `get`, `set`, `has`, `deleteProperty`, `apply`).
+- **`Reflect`:** Companion object that provides the default underlying language operations. Always use `Reflect.get()` and `Reflect.set()` inside Proxy traps because they properly pass the `receiver` argument, ensuring prototype chain lookups and `this` bindings remain correct.
+- **Under the Hood in State Management Libraries (Vue 3, MobX, Immer):**
+  - **`get` trap:** Used for **Dependency Tracking (Subscriber Collection)** — records which component/computed property accessed the state.
+  - **`set` trap:** Used for **Triggering Updates** — detects mutations and automatically triggers batch re-renders of dependent components without requiring `this.setState()`.
+
+#### 2. Symbol & Well-Known Symbols
+- `Symbol()` creates an immutable, completely unique primitive value. Even two symbols created with the same description are strictly non-equal (`Symbol("key") !== Symbol("key")`).
+- **Hidden Object Keys:** Symbols do not appear in `for...in` loops or `Object.keys()`, making them ideal for internal/private metadata.
+- **Well-Known Symbols:** JavaScript exposes built-in hooks to override standard language behavior:
+  - `Symbol.iterator`: Defines the default iterator consumed by `for...of` loops, the spread operator `...`, and destructuring.
+  - `Symbol.toPrimitive`: Customizes how an object converts to a primitive (number/string).
+  - `Symbol.hasInstance`: Customizes the behavior of the `instanceof` operator.
+
+#### 3. Iterators & The Iterable Protocol
+JavaScript defines an iteration contract with two protocols:
+1. **The Iterable Protocol:** An object must have a method at `[Symbol.iterator]()` that returns an iterator object.
+2. **The Iterator Protocol:** The returned iterator object must implement a `next()` method that returns an object with:
+   - `value`: The current iteration value.
+   - `done`: Boolean indicating if iteration is complete (`true` when finished).
+- Arrays, Strings, Sets, and Maps implement this protocol natively.
+
+#### 4. Generators (`function*` and `yield`)
+- A generator is a special function that can pause execution midway (using `yield`) and be resumed later on demand (using `.next()`).
+- **Lazy Evaluation:** Generates values one at a time as requested, avoiding loading massive or infinite data sequences into memory all at once.
+- Calling a generator function does not run its body immediately; it returns a **Generator Object** conforming to both the Iterable and Iterator protocols.
+
+### Code:
+```javascript
+// =============================================================
+// 1. Proxy & Reflect: Reactive State Management Pattern
+// =============================================================
+function createObservable(targetObj, onStateChange) {
+    return new Proxy(targetObj, {
+        get(target, prop, receiver) {
+            console.log(`[READ] Accessed: "${String(prop)}"`);
+            return Reflect.get(target, prop, receiver);
+        },
+        set(target, prop, value, receiver) {
+            const oldValue = target[prop];
+            const success = Reflect.set(target, prop, value, receiver);
+            if (success && oldValue !== value) {
+                console.log(`[MUTATION] "${String(prop)}" changed:`, oldValue, "->", value);
+                onStateChange(prop, value); // Notify UI to re-render
+            }
+            return success;
+        }
+    });
+}
+
+// Usage:
+const appState = createObservable({ counter: 0, user: "Mrityunjay" }, (prop, val) => {
+    console.log(`UI Update Triggered: ${prop} is now ${val}`);
+});
+
+console.log(appState.counter); // Trigger get trap
+appState.counter = 5;          // Trigger set trap and notify subscriber
+
+
+// =============================================================
+// 2. Custom Iterable with Symbol.iterator
+// =============================================================
+const range = {
+    start: 1,
+    end: 3,
+    [Symbol.iterator]() {
+        let current = this.start;
+        const last = this.end;
+        return {
+            next() {
+                if (current <= last) {
+                    return { value: current++, done: false };
+                } else {
+                    return { value: undefined, done: true };
+                }
+            }
+        };
+    }
+};
+
+// Consumed by for...of and spread operator:
+for (let num of range) {
+    console.log("Range item:", num); // 1, 2, 3
+}
+console.log("Spread range into array:", [...range]); // [1, 2, 3]
+
+
+// =============================================================
+// 3. Generators: Infinite ID Generator & Lazy Sequences
+// =============================================================
+function* idGenerator() {
+    let id = 1001;
+    while (true) {
+        yield `ID_${id++}`; // Pauses execution until next() is requested
+    }
+}
+
+const idGen = idGenerator();
+console.log(idGen.next().value); // "ID_1001"
+console.log(idGen.next().value); // "ID_1002"
+console.log(idGen.next().value); // "ID_1003"
+```
+
+---
+
 # 4. Object-Oriented Programming (`oops`)
 
 ## 4.1 Function Constructor and Inheritance
@@ -974,3 +1369,179 @@ let student1 = new Students('Mukesh','Singh',28, null, 99.00, 'fullstack')
 console.log(student1)
 student1.walk()
 ```
+
+---
+
+# 5. DOM, Browser APIs & Performance Optimization
+
+## 5.1 Browser Storage & Web Workers
+*Source file: `browser-apis-performance/storage-and-workers.html`*
+
+### Notes:
+
+#### 1. Browser Storage Comparison
+| Storage Type | Capacity | Lifetime | Sent with HTTP Requests? | Best Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| **`localStorage`** | ~5MB - 10MB | Persistent until explicitly deleted | No | User UI preferences, themes, non-sensitive cached data |
+| **`sessionStorage`** | ~5MB | Scoped to active browser tab (cleared on tab close) | No | Multi-step form wizards, temporary single-tab state |
+| **`Cookies`** | ~4KB | Manually set via `Expires` / `Max-Age` | **Yes** (Sent automatically on every matching HTTP request header) | Authentication session tokens, tracking IDs |
+| **`IndexedDB`** | >250MB+ (Gigabytes) | Persistent | No | Large structured datasets, binary files, offline PWA database |
+
+#### 2. Cookie Security Flags (Essential Interview Topic)
+- **`HttpOnly`:** Prevents client-side JavaScript from accessing the cookie via `document.cookie`. Crucial defense against session token theft via **Cross-Site Scripting (XSS)**.
+- **`Secure`:** Guarantees that the cookie is transmitted only over encrypted **HTTPS** connections, protecting it from eavesdropping and Man-in-the-Middle (MitM) attacks.
+- **`SameSite`:** Governs whether cookies are dispatched with cross-site requests to mitigate **Cross-Site Request Forgery (CSRF)**:
+  - `SameSite=Strict`: The cookie is never sent with cross-site requests (e.g. following a link from an external email).
+  - `SameSite=Lax` *(Modern Browser Default)*: The cookie is sent only on top-level safe user navigations (e.g. clicking an external link), but omitted on cross-site subrequests (embedded `<img>`, `<iframe>`, or `POST` requests).
+  - `SameSite=None`: The cookie is sent on all cross-site requests (requires the `Secure` flag to be set).
+
+#### 3. Offloading Computation: Web Workers vs Service Workers
+- **Single-Threaded Bottleneck:** JavaScript execution in the browser runs on a single main thread alongside rendering and DOM manipulation. Running heavy CPU computations (sorting millions of records, image filtering, cryptography) blocks the main thread, resulting in frozen UI and dropped frames.
+- **Web Workers:** Run scripts in background OS-level threads completely isolated from the main thread. They do **not** have direct access to the DOM or the `window` object. They communicate with the main thread asynchronously via `postMessage()` and the `message` event.
+- **Service Workers:** Act as a programmable network proxy between the web application, browser, and the network. They operate in the background to handle Progressive Web App (PWA) capabilities: offline caching of assets (`Cache API`), background sync, and push notifications.
+
+### Code:
+```javascript
+// --- 1. localStorage and sessionStorage ---
+localStorage.setItem("theme", "dark");
+console.log("localStorage theme:", localStorage.getItem("theme"));
+
+sessionStorage.setItem("currentWizardStep", "2");
+console.log("sessionStorage step:", sessionStorage.getItem("currentWizardStep"));
+
+
+// --- 2. IndexedDB Basics (Asynchronous Browser Database) ---
+const request = indexedDB.open("AppDatabase", 1);
+
+request.onupgradeneeded = (e) => {
+    const db = e.target.result;
+    if (!db.objectStoreNames.contains("users")) {
+        db.createObjectStore("users", { keyPath: "id" });
+    }
+};
+
+request.onsuccess = (e) => {
+    const db = e.target.result;
+    const tx = db.transaction("users", "readwrite");
+    const store = tx.objectStore("users");
+    store.put({ id: 101, name: "Mrityunjay", role: "Developer" });
+};
+
+
+// --- 3. Web Worker: Offloading Heavy CPU Computation ---
+// In a real project, this would be a separate file: const worker = new Worker('worker.js');
+const workerCode = `
+    self.onmessage = function(e) {
+        console.log("Worker thread received limit:", e.data);
+        // Heavy computation offloaded from the main thread
+        let sum = 0;
+        for (let i = 0; i < e.data; i++) {
+            sum += i;
+        }
+        self.postMessage(sum); // Send computed result back to main thread
+    };
+`;
+
+const blob = new Blob([workerCode], { type: "application/javascript" });
+const worker = new Worker(URL.createObjectURL(blob));
+
+// Main thread listens for result without UI freezing
+worker.onmessage = function(e) {
+    console.log("Heavy calculation result from Worker:", e.data);
+};
+
+// Start background task
+worker.postMessage(10000000);
+```
+
+---
+
+## 5.2 Observer APIs: Intersection, Resize & Mutation
+*Source file: `browser-apis-performance/observer-apis.html`*
+
+### Notes:
+
+#### Why use Observer APIs over Event Listeners?
+Traditional implementations relied on binding listeners to window `scroll`, `resize`, or DOM polling. These events fire dozens of times per second on the main thread, causing **forced synchronous layouts** and **layout thrashing**.
+Observer APIs run asynchronously outside the critical rendering path, batched by the browser engine for maximum performance.
+
+1. **`IntersectionObserver` -**
+   - Monitors when a target element enters, exits, or intersects with the browser viewport (or an ancestor element).
+   - **Key Configurations:** `threshold` (0.0 to 1.0 indicating percentage visibility) and `rootMargin` (pre-fetching buffer).
+   - **Top Use Cases:** Image lazy loading, Infinite scrolling (sentinel element at the bottom of a list), ad viewability tracking.
+
+2. **`ResizeObserver` -**
+   - Reports changes to the dimensions (content-box, border-box) of specific individual DOM elements.
+   - **Top Use Cases:** Container-query-like component responsive behavior, dynamic charting canvas re-rendering when parent container resizes.
+
+3. **`MutationObserver` -**
+   - Watches for direct mutations to the DOM tree (adding/removing child nodes, updating element attributes, or modifying character data).
+   - **Top Use Cases:** Third-party widget integrations, Microfrontend state syncing, accessibility auditors, undo/redo DOM history.
+
+### Code:
+```javascript
+// =============================================================
+// 1. IntersectionObserver: Infinite Scroll / Lazy Loading
+// =============================================================
+const sentinel = document.getElementById("sentinel");
+
+const intersectionObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            console.log("Sentinel is in viewport! Triggering next page fetch...");
+            // loadNextPage();
+        }
+    });
+}, {
+    root: null,         // Default: browser viewport
+    rootMargin: "100px",// Pre-fetch 100px before user reaches the bottom
+    threshold: 0.1      // Fires as soon as 10% of sentinel is visible
+});
+
+if (sentinel) {
+    intersectionObserver.observe(sentinel);
+}
+
+
+// =============================================================
+// 2. ResizeObserver: Element Dimension Tracking
+// =============================================================
+const chartContainer = document.getElementById("chart-container");
+
+const resizeObserver = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+        const { width, height } = entry.contentRect;
+        console.log(`Container resized -> Width: ${width}px, Height: ${height}px`);
+        // Redraw responsive canvas/SVG chart
+    }
+});
+
+if (chartContainer) {
+    resizeObserver.observe(chartContainer);
+}
+
+
+// =============================================================
+// 3. MutationObserver: Monitoring DOM Tree Changes
+// =============================================================
+const targetNode = document.getElementById("app-root");
+
+const mutationObserver = new MutationObserver((mutationsList, observer) => {
+    for (let mutation of mutationsList) {
+        if (mutation.type === "childList") {
+            console.log("Child nodes added or removed:", mutation.addedNodes);
+        } else if (mutation.type === "attributes") {
+            console.log(`Attribute "${mutation.attributeName}" was modified!`);
+        }
+    }
+});
+
+if (targetNode) {
+    mutationObserver.observe(targetNode, {
+        attributes: true,  // Monitor attribute changes
+        childList: true,   // Monitor direct children addition/removal
+        subtree: true      // Monitor all descendant nodes
+    });
+}
+```
+

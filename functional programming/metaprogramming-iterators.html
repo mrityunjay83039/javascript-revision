@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metaprogramming & Advanced Primitives</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>Metaprogramming & Advanced Primitives</h1>
+
+    <ol>
+        <li>
+            <h2>1. Proxy and Reflect</h2>
+            <p>
+                - <strong>Proxy:</strong> Wraps a target object and intercepts fundamental operations like property reading (<code>get</code>), writing (<code>set</code>), deletion, or function calls.<br>
+                - <strong>Reflect:</strong> Companion built-in object that provides the default implementation for intercepted operations. Using <code>Reflect.get/set</code> ensures correct <code>this</code> binding (receiver) across prototype chains.<br>
+                - <strong>Under the Hood in State Libraries:</strong> Vue 3, MobX, and Immer use <code>Proxy</code> to observe property reads (dependency tracking) and property writes (triggering reactive re-renders).
+            </p>
+        </li>
+        <li>
+            <h2>2. Symbol and Well-Known Symbols</h2>
+            <p>
+                - <code>Symbol()</code> creates guaranteed unique, immutable primitive identifiers for object properties.<br>
+                - <strong>Well-Known Symbols:</strong> JavaScript exposes internal language behaviors via symbols. The most famous is <code>Symbol.iterator</code>, which specifies the default iterator for an object.
+            </p>
+        </li>
+        <li>
+            <h2>3. Iterators and the Iterable Protocol</h2>
+            <p>
+                - <strong>Iterable Protocol:</strong> An object is iterable if it implements a method at key <code>[Symbol.iterator]</code>.<br>
+                - <strong>Iterator Protocol:</strong> The iterator object must provide a <code>next()</code> method returning <code>{ value: any, done: boolean }</code>.<br>
+                - Enables native support for <code>for...of</code> loops, array destructuring <code>[a, b]</code>, and the spread operator <code>[...iterable]</code>.
+            </p>
+        </li>
+        <li>
+            <h2>4. Generators (<code>function*</code> / <code>yield</code>)</h2>
+            <p>
+                - Generators are functions that can pause execution midway (using <code>yield</code>) and resume later when <code>.next()</code> is called.<br>
+                - <strong>Lazy Evaluation:</strong> Generates values on-demand without calculating or storing everything in memory upfront (e.g. infinite sequence generation, async task runners).
+            </p>
+        </li>
+    </ol>
+
+    <script>
+        // =============================================================
+        // 1. Proxy & Reflect: Reactive State Observer (Vue 3 style)
+        // =============================================================
+        function createReactiveState(initialObj, onChange) {
+            return new Proxy(initialObj, {
+                get(target, prop, receiver) {
+                    console.log(`[GET] Accessing property: "${String(prop)}"`);
+                    return Reflect.get(target, prop, receiver);
+                },
+                set(target, prop, value, receiver) {
+                    const oldValue = target[prop];
+                    const success = Reflect.set(target, prop, value, receiver);
+                    if (success && oldValue !== value) {
+                        console.log(`[SET] Property "${String(prop)}" changed: ${oldValue} -> ${value}`);
+                        onChange(prop, value); // Trigger UI re-render
+                    }
+                    return success;
+                }
+            });
+        }
+
+        const state = createReactiveState({ count: 0, user: "Mrityunjay" }, (prop, val) => {
+            console.log(`--> Re-rendering UI due to ${prop} = ${val}`);
+        });
+
+        console.log(state.count); // Triggers GET
+        state.count = 1;          // Triggers SET and notifies subscriber
+
+
+        // =============================================================
+        // 2. Custom Iterable with Symbol.iterator
+        // =============================================================
+        const numberRange = {
+            from: 1,
+            to: 4,
+            [Symbol.iterator]() {
+                let current = this.from;
+                const last = this.to;
+                return {
+                    next() {
+                        if (current <= last) {
+                            return { value: current++, done: false };
+                        } else {
+                            return { value: undefined, done: true };
+                        }
+                    }
+                };
+            }
+        };
+
+        // Consumed by for...of
+        for (let num of numberRange) {
+            console.log("Range number via for...of:", num); // 1, 2, 3, 4
+        }
+        console.log("Spread iterable:", [...numberRange]); // [1, 2, 3, 4]
+
+
+        // =============================================================
+        // 3. Generators: Lazy Sequence & ID Generation (function* / yield)
+        // =============================================================
+        function* idGenerator() {
+            let id = 1000;
+            while (true) {
+                yield `USER_${id++}`; // Pauses execution here until next() is called
+            }
+        }
+
+        const gen = idGenerator();
+        console.log(gen.next().value); // "USER_1000"
+        console.log(gen.next().value); // "USER_1001"
+        console.log(gen.next().value); // "USER_1002"
+    </script>
+</body>
+</html>

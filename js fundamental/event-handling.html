@@ -73,6 +73,24 @@
             </pre>
             </p>
         </li>
+        <li>
+            <p><strong>Event Delegation - </strong>
+            Event Delegation is a pattern where we attach a single event listener to a parent node instead of attaching multiple listeners to individual child elements.
+            It relies on <strong>Event Bubbling</strong>: when a child is clicked, the event bubbles up to the parent.
+            <br>
+            <strong>Benefits:</strong>
+            1. Saves memory (1 listener instead of 1000s of listeners).<br>
+            2. Automatically handles dynamically added children without needing to re-bind events.<br>
+            Example -
+            <pre>
+                document.querySelector('#parent-list').addEventListener('click', function(e) {
+                    if (e.target.tagName === 'LI') {
+                        console.log('Clicked item:', e.target.textContent);
+                    }
+                });
+            </pre>
+            </p>
+        </li>
     </ol>
     <div class="playground">
         <div id="grand-parent">
@@ -99,6 +117,14 @@
         document.querySelector('#child').addEventListener('click',()=>{
             console.log('Child clicked')
         })
+
+        // Event Delegation Example
+        // document.querySelector('#parent').addEventListener('click', (event) => {
+        //     const target = event.target.closest('#child');
+        //     if (target) {
+        //         console.log('Delegated click handled on parent for child element');
+        //     }
+        // });
     </script>
 </body>
 </html>

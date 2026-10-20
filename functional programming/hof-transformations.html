@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Higher-Order Functions & Immutability Methods</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>Higher-Order Functions (HOFs) & Array Immutability Methods</h1>
+
+    <ol>
+        <li>
+            <p><strong>Higher-Order Function (HOF) - </strong>A function that receives another function as an argument, returns a function, or does both. Common examples include <code>map</code>, <code>filter</code>, <code>reduce</code>, and custom functions like debouncers/throttlers.</p>
+        </li>
+        <li>
+            <p><strong>Core Array Transformations - </strong>
+            1. <strong><code>map()</code>:</strong> Transforms each item and returns a brand-new array of identical length.<br>
+            2. <strong><code>filter()</code>:</strong> Filters items based on a boolean condition and returns a new filtered array.<br>
+            3. <strong><code>reduce()</code>:</strong> Accumulates array elements down to a single value (number, object, array).<br>
+            4. <strong><code>flat(depth)</code>:</strong> Creates a new array with sub-array elements concatenated into it up to the specified depth (use <code>Infinity</code> for complete flattening).<br>
+            5. <strong><code>flatMap()</code>:</strong> First maps each element using a mapping function, then flattens the result by depth 1. It is more efficient than calling <code>.map().flat()</code>.
+            </p>
+        </li>
+        <li>
+            <p><strong>Modern Immutability Methods (ES2023 / ES14) - </strong>
+            In functional programming and state management (e.g. React/Redux), mutating state directly causes subtle bugs. Traditional methods like <code>sort()</code>, <code>reverse()</code>, and <code>splice()</code> mutate the original array in place.<br>
+            ES2023 introduced non-mutating alternatives:
+            <br>
+            - <strong><code>toSorted()</code>:</strong> Returns a new sorted array without altering the original.<br>
+            - <strong><code>toReversed()</code>:</strong> Returns a new reversed array without altering the original.<br>
+            - <strong><code>toSpliced()</code>:</strong> Returns a new array with added/removed elements without mutating the original.<br>
+            - <strong><code>with()</code>:</strong> Returns a new array with a single element updated at a given index.
+            </p>
+        </li>
+    </ol>
+
+    <script>
+        // -------------------------------------------------------------
+        // 1. Array Transformations: map, filter, reduce
+        // -------------------------------------------------------------
+        const products = [
+            { id: 1, name: "Laptop", category: "Electronics", price: 60000 },
+            { id: 2, name: "Shirt", category: "Clothing", price: 1500 },
+            { id: 3, name: "Phone", category: "Electronics", price: 40000 },
+            { id: 4, name: "Jeans", category: "Clothing", price: 2500 }
+        ];
+
+        // Pipeline: Filter electronics, apply 10% discount, compute total price
+        const totalDiscountedElectronics = products
+            .filter(item => item.category === "Electronics")
+            .map(item => item.price * 0.9)
+            .reduce((total, price) => total + price, 0);
+
+        console.log("Total discounted electronics:", totalDiscountedElectronics); // 90000
+
+
+        // -------------------------------------------------------------
+        // 2. flat() and flatMap()
+        // -------------------------------------------------------------
+        // flat: flattens nested arrays
+        const nested = [1, [2, [3, [4, 5]]]];
+        console.log(nested.flat());          // [1, 2, [3, [4, 5]]] (default depth: 1)
+        console.log(nested.flat(2));         // [1, 2, 3, [4, 5]]
+        console.log(nested.flat(Infinity));  // [1, 2, 3, 4, 5]
+
+        // flatMap: map each element and flatten by 1 level
+        const orders = [
+            { orderId: 101, items: ["Laptop", "Mouse"] },
+            { orderId: 102, items: ["Keyboard"] },
+            { orderId: 103, items: ["Monitor", "HDMI Cable"] }
+        ];
+
+        const allItems = orders.flatMap(order => order.items);
+        console.log("All items flatMapped:", allItems);
+        // Output: ["Laptop", "Mouse", "Keyboard", "Monitor", "HDMI Cable"]
+
+
+        // -------------------------------------------------------------
+        // 3. Immutability Methods (ES2023): toSorted, toReversed, toSpliced
+        // -------------------------------------------------------------
+        const numbers = [5, 2, 9, 1, 7];
+
+        // --- A. Sorting without mutation ---
+        // Old way (mutates original): numbers.sort((a, b) => a - b)
+        const sortedNumbers = numbers.toSorted((a, b) => a - b);
+        console.log("toSorted:", sortedNumbers); // [1, 2, 5, 7, 9]
+        console.log("Original numbers untouched:", numbers); // [5, 2, 9, 1, 7]
+
+        // --- B. Reversing without mutation ---
+        // Old way (mutates original): numbers.reverse()
+        const reversedNumbers = numbers.toReversed();
+        console.log("toReversed:", reversedNumbers); // [7, 1, 9, 2, 5]
+        console.log("Original numbers untouched:", numbers); // [5, 2, 9, 1, 7]
+
+        // --- C. Splicing without mutation ---
+        // Old way: numbers.splice(1, 2, 99) (mutated original)
+        // toSpliced(startIndex, deleteCount, ...itemsToAdd)
+        const splicedNumbers = numbers.toSpliced(1, 2, 99);
+        console.log("toSpliced:", splicedNumbers); // [5, 99, 1, 7]
+        console.log("Original numbers untouched:", numbers); // [5, 2, 9, 1, 7]
+
+        // --- D. Immutable index replacement: with() ---
+        const replacedNumbers = numbers.with(2, 999);
+        console.log("with(index, val):", replacedNumbers); // [5, 2, 999, 1, 7]
+        console.log("Original numbers untouched:", numbers); // [5, 2, 9, 1, 7]
+    </script>
+</body>
+</html>

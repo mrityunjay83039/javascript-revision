@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Storage & Workers</title>
+    <style>
+        *{
+            text-size-adjust: 100%;
+            font-feature-settings: normal;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-variation-settings: normal;
+        }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Browser Storage & Workers</h1>
+
+    <ol>
+        <li>
+            <h2>1. Browser Storage Comparison</h2>
+            <table>
+                <tr>
+                    <th>Storage</th>
+                    <th>Capacity</th>
+                    <th>Lifetime</th>
+                    <th>Sent with HTTP Requests?</th>
+                    <th>Best Use Case</th>
+                </tr>
+                <tr>
+                    <td><strong>localStorage</strong></td>
+                    <td>~5MB - 10MB</td>
+                    <td>Persistent until explicitly deleted</td>
+                    <td>No</td>
+                    <td>User UI preferences, themes, non-sensitive cached data</td>
+                </tr>
+                <tr>
+                    <td><strong>sessionStorage</strong></td>
+                    <td>~5MB</td>
+                    <td>Tab/Session lifetime (cleared on tab close)</td>
+                    <td>No</td>
+                    <td>Multi-step form wizards, temporary single-tab state</td>
+                </tr>
+                <tr>
+                    <td><strong>Cookies</strong></td>
+                    <td>~4KB</td>
+                    <td>Manually set via <code>Expires</code> / <code>Max-Age</code></td>
+                    <td>Yes (Sent automatically in request headers)</td>
+                    <td>Auth session tokens, tracking IDs</td>
+                </tr>
+                <tr>
+                    <td><strong>IndexedDB</strong></td>
+                    <td>>250MB (Gigabytes)</td>
+                    <td>Persistent</td>
+                    <td>No</td>
+                    <td>Large structured data, files, offline database storage</td>
+                </tr>
+            </table>
+        </li>
+
+        <li>
+            <h2>2. Cookie Security Flags (Crucial for Interviews)</h2>
+            <p>
+                - <strong><code>HttpOnly</code>:</strong> Prevents client-side scripts from reading the cookie via <code>document.cookie</code>. Crucial defense against <strong>Cross-Site Scripting (XSS)</strong> session hijacking.<br>
+                - <strong><code>Secure</code>:</strong> Ensures the cookie is only transmitted over encrypted <strong>HTTPS</strong> connections, preventing Man-in-the-Middle (MitM) attacks.<br>
+                - <strong><code>SameSite</code>:</strong> Controls whether cookies are sent with cross-site requests to defend against <strong>Cross-Site Request Forgery (CSRF)</strong>:<br>
+                  &nbsp;&nbsp;&bull; <code>Strict</code>: Cookie is never sent on cross-site requests.<br>
+                  &nbsp;&nbsp;&bull; <code>Lax</code> (Default): Sent on top-level safe navigations (like clicking an external link), but omitted on cross-site subrequests (images, POST forms).<br>
+                  &nbsp;&nbsp;&bull; <code>None</code>: Sent on all cross-site requests (requires <code>Secure</code>).
+            </p>
+        </li>
+
+        <li>
+            <h2>3. Web Workers vs Service Workers</h2>
+            <p>
+                - <strong>Web Workers:</strong> Create background OS-level threads to execute heavy computational tasks (crypto, video/image processing, large calculations) without freezing the main UI thread. They communicate with the main thread via <code>postMessage()</code> and <code>onmessage</code>.<br>
+                - <strong>Service Workers:</strong> Act as an asynchronous programmable network proxy between the browser and the network. They enable Progressive Web App (PWA) features: offline asset caching, background data sync, and push notifications.
+            </p>
+        </li>
+    </ol>
+
+    <script>
+        // --- 1. localStorage & sessionStorage ---
+        localStorage.setItem("theme", "dark");
+        console.log("localStorage theme:", localStorage.getItem("theme"));
+
+        sessionStorage.setItem("step", "2");
+        console.log("sessionStorage step:", sessionStorage.getItem("step"));
+
+
+        // --- 2. IndexedDB Basics (Asynchronous NoSQL DB in Browser) ---
+        const request = indexedDB.open("AppDatabase", 1);
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains("users")) {
+                db.createObjectStore("users", { keyPath: "id" });
+            }
+        };
+        request.onsuccess = (e) => {
+            const db = e.target.result;
+            const tx = db.transaction("users", "readwrite");
+            const store = tx.objectStore("users");
+            store.put({ id: 101, name: "Mrityunjay", role: "Developer" });
+        };
+
+
+        // --- 3. Web Worker Example ---
+        // (Simulated inline worker via Blob)
+        const workerCode = `
+            self.onmessage = function(e) {
+                console.log("Worker received number:", e.data);
+                // Heavy computation (e.g., Fibonacci or sorting millions of items)
+                let result = 0;
+                for (let i = 0; i < e.data; i++) {
+                    result += i;
+                }
+                self.postMessage(result);
+            };
+        `;
+        const blob = new Blob([workerCode], { type: "application/javascript" });
+        const worker = new Worker(URL.createObjectURL(blob));
+
+        worker.onmessage = function(e) {
+            console.log("Heavy calculation result from Worker:", e.data);
+        };
+        worker.postMessage(1000000); // Offload computation to background thread
+    </script>
+</body>
+</html>

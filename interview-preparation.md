@@ -1,858 +1,813 @@
-# JavaScript Full-Stack Interview Preparation Guide
+# JavaScript Revision & Interview Preparation Notes
 
-A step-by-step master revision guide compiled directly from the practical code examples, edge cases, polyfills, and architectural concepts across this repository.
+This markdown file compiles all the revision notes, concepts, and code directly from your files across `js fundamental`, `asynjs`, `functional programming`, and `oops` without changing your original text and explanations.
 
 ---
 
 ## Table of Contents
-1. [Step 1: Data Types & Memory Management](#step-1-data-types--memory-management)
-2. [Step 2: Variables, Scope, Hoisting & Temporal Dead Zone (TDZ)](#step-2-variables-scope-hoisting--temporal-dead-zone-tdz)
-3. [Step 3: Execution Context & The Event Loop Architecture](#step-3-execution-context--the-event-loop-architecture)
-4. [Step 4: Closures, Lexical Scope & Function Currying](#step-4-closures-lexical-scope--function-currying)
-5. [Step 5: The `this` Keyword & Execution Context Rules](#step-5-the-this-keyword--execution-context-rules)
-6. [Step 6: Asynchronous JavaScript (Callbacks, Promises, Async/Await)](#step-6-asynchronous-javascript-callbacks-promises-asyncawait)
-7. [Step 7: Core JavaScript Polyfills (Live Coding / Machine Coding)](#step-7-core-javascript-polyfills-live-coding--machine-coding)
-8. [Step 8: DOM Events (Bubbling, Capturing, Propagation)](#step-8-dom-events-bubbling-capturing-propagation)
-9. [Step 9: Performance Optimization (Debouncing vs Throttling)](#step-9-performance-optimization-debouncing-vs-throttling)
-10. [Step 10: Object-Oriented JavaScript (Constructor Functions vs ES6 Classes)](#step-10-object-oriented-javascript-constructor-functions-vs-es6-classes)
-11. [Step 11: Top Tricky Output & Rapid-Fire Interview Questions](#step-11-top-tricky-output--rapid-fire-interview-questions)
+- [1. JS Fundamental](#1-js-fundamental)
+  - [1.1 Variables, Hoisting & TDZ (`variables-hoisting-tdz.html`)](#11-variables-hoisting--tdz)
+  - [1.2 Data Types (`data-types.html`)](#12-data-types)
+  - [1.3 Execution Context & Event Loop (`execution-eventloop.html`)](#13-execution-context--event-loop)
+  - [1.4 Closure (`clouser.html`)](#14-closure)
+  - [1.5 This Keyword (`this-keyword.md`)](#15-this-keyword)
+  - [1.6 Event Handling: Bubbling & Capturing (`event-handling.html`)](#16-event-handling-bubbling--capturing)
+  - [1.7 Debouncing & Throttling (`debouncing-throttling.html`)](#17-debouncing--throttling)
+- [2. Asynchronous JavaScript (`asynjs`)](#2-asynchronous-javascript-asynjs)
+  - [2.1 CallBack (`callback.html`)](#21-callback)
+  - [2.2 Promise (`promise.html`)](#22-promise)
+  - [2.3 Async Await (`async-await.html`)](#23-async-await)
+- [3. Functional Programming](#3-functional-programming)
+  - [3.1 Important Polyfills (`polyfills.html`)](#31-important-polyfills)
+- [4. Object-Oriented Programming (`oops`)](#4-object-oriented-programming-oops)
+  - [4.1 Function Constructor and Inheritance (`functionConstructor.html`)](#41-function-constructor-and-inheritance)
+  - [4.2 Classes (`class.html`)](#42-classes)
 
 ---
 
-## Step 1: Data Types & Memory Management
-*Reference: [`data-types.html`](./js%20fundamental/data-types.html)*
+# 1. JS Fundamental
 
-### 1.1 Overview
-JavaScript is a **dynamically-typed** language (variable types are resolved at runtime based on the assigned value). Data types are divided into two primary categories:
+## 1.1 Variables, Hoisting & TDZ
+*Source file: `js fundamental/variables-hoisting-tdz.html`*
 
-| Category | Types | Storage Location | Passing Mechanism |
-| :--- | :--- | :--- | :--- |
-| **Primitive Types** | `Number`, `String`, `Boolean`, `undefined`, `null`, `BigInt`, `Symbol` | Stack memory | **Pass by Value** (Copied entirely) |
-| **Non-Primitive (Reference)** | `Object`, `Array`, `Function`, `Date`, `RegExp` | Heap memory (Reference pointer stored in Stack) | **Pass by Reference** (Address pointer copied) |
+### Notes:
+1. **Variable -** In JavaScript variables can be declared using `var`, `let` and `const`. `var` is not the recommended way. it should be rarely used.
 
-### 1.2 Pass by Value vs Pass by Reference
+2. **Difference Between Var, Let, Const -**
+   - **Var -** `var` has functional scope. Means it can be accessed anywhere in the function it is defined. It can be re declared and re assigned also.
+     If we declare a variable with `var` in global scope, means not inside any function it will work as global variable.
+     The reason why it is not recommended is that, it can be re-declared and that can be a problem if multiple developers working on the same project.
+     variables declared with `var` are hoisted to the top of their scope during the compilation phase, which means you can use a variable before it's declared in the code.
+   - **Let -** `let` has block scope (enclosed by curly braces). It is introduced in ES6. We can not re-declare it but can re-assign. variables are hoisted to the top of their block but are not initialized until the actual declaration is encountered during runtime.
+   - **Const -** Similar to `let`, `const` has block level scope. it is used for variables that should not be reassigned after initialization. However, it does not make the variable itself immutable; it just prevents reassignment. variables are hoisted to the top of their block but are not initialized untill the actual declaration is encountered during run time.
+
+3. **Temporal Dead Zone -** The Temporal Dead Zone (TDZ) in JavaScript refers to the period between the start of the scope and the point where a variable is declared. During this period, attempting to access the variable will result in a `ReferenceError`. This concept is associated with variables declared using `let` and `const` declarations.
+
+4. **Hoisting -** Whenever a code runs in javascript, it creates a global execution context. It has two phases, 1st Memory Allocation phase and the second is code execution phase.
+   In memory allocation phase, first all variables and functions are stored in main memory with `key:value` pair. while storing the variables in main memory, first all variables are assigned a value `'undefined'`. functions are stored with complete body.
+   So if we try to access a variable before its initialization, it will return `undefined`. It works same way for `let` and `const` also but because of the TDZ, it throw a reference error.
+
+### Code:
 ```javascript
-// --- PRIMITIVE: Pass by Value ---
+// lets try to access var a outside of the function test.
+// console.log(a);    // ReferenceError: a is not defined
+
+function test(){
+    // try to see if var a is hoisted 
+    console.log(a);       // Output : undefined
+
+    var a = 9;
+    // try to access let and const outside of block. Here b and c are consoled outside the block scope.
+    // console.log(b);         // ReferenceError: b is not defined
+    // console.log(c);         // ReferenceError: c is not defined
+
+    if(a){
+
+        // console.log(b); // console b before declaration. Output: ReferenceError: Cannot access 'b' before initialization
+
+        let b = 10;
+        const c = 2;
+        // try to re-declare b and c 
+        // let b = 30;   // SyntaxError: Identifier 'b' has already been declared
+        // const c = 4;     // SyntaxError: Identifier 'c' has already been declared
+
+        // lets try to re-assign both b and c
+        b = 50;
+        // c = 100;           //TypeError: Assignment to constant variable.
+
+        console.log(b)        // Output: 50
+       
+    }
+}
+
+test()
+
+// try to call fn before declaration
+fn()
+
+// test hoisting for function
+function fn(){
+    console.log('test from fn ');
+}
+```
+
+---
+
+## 1.2 Data Types
+*Source file: `js fundamental/data-types.html`*
+
+### Notes:
+1. **Data Types in JS -** JavaScript is a dynamically-typed language, which means we don't need to define data type of a variable while declaring it. data type is assigned depending on value at run time.
+   However, javascript has many data types which can be categorised mainly in two category:
+   1. Primitive Data Type
+   2. Non Primitive(Object) Data Type
+
+2. **Primitive Data Type -** This is pass by value. Means if we assing one variable to other, it will copy the same value. For example -
+```javascript
 let a = 26;
 let b;
 b = a;
-b = 30; // Modifying 'b' does NOT affect 'a'
-console.log(a); // Output: 26
-console.log(b); // Output: 30
-
-// --- NON-PRIMITIVE: Pass by Reference ---
-let obj1 = { name: "Mrityunjay" };
-let obj2 = obj1; // Copies memory address pointer
-obj2.name = "Mishra";
-console.log(obj1.name); // Output: "Mishra" (Both pointers reference the same heap object)
+console.log(b); // output will be 26
 ```
+   Number, String, undefined, null, Boolean and Symbol are primitive data types. Symbol is introduced in ES6, symbols are unique and immutable data types.
 
-### 1.3 Key Interview Questions & Gotchas
-- **Q: What is a `Symbol`?**
-  - Introduced in ES6, a `Symbol` is an immutable, completely unique primitive value often used as private/unique property keys in objects:
-    ```javascript
-    const s1 = Symbol("id");
-    const s2 = Symbol("id");
-    console.log(s1 === s2); // false
-    ```
-- **Q: Why does `typeof null === "object"`?**
-  - This is a historic bug in JS since the first version. In the initial implementation, values were represented with a type tag and a value. The type tag for objects was `0`. `null` was represented as the NULL pointer (`0x00`), hence returning `"object"`.
+3. **Non-Primitive(Object) Data Type -** Non-primitive are pass by reference. Means variables are stored in the main memory while values are stored in the heap memory. Both variable and values are connected to pointer. So if we assing one variable to other, it only assign the pointer, don't copy the value.
+   Object, Array and functions are non-primitive data type.
 
 ---
 
-## Step 2: Variables, Scope, Hoisting & Temporal Dead Zone (TDZ)
-*Reference: [`variables-hoisting-tdz.html`](./js%20fundamental/variables-hoisting-tdz.html)*
+## 1.3 Execution Context & Event Loop
+*Source file: `js fundamental/execution-eventloop.html`*
 
-### 2.1 Comparison: `var` vs `let` vs `const`
+### Execution Context Notes:
+1. **Execution Context -** Execution context is a concept which represents an invironment in which javascript codes are executed.
+   Every execution context has 2 phase - 1st Memory allocation and second Code execution.
+   There are mainly two type of execution context - 1. Global Execution Context and 2. Functional Execution Context.
 
-| Feature | `var` | `let` | `const` |
-| :--- | :--- | :--- | :--- |
-| **Scope** | Function Scope | Block Scope (`{ ... }`) | Block Scope (`{ ... }`) |
-| **Hoisting** | Yes (initialized with `undefined`) | Yes (uninitialized, stored in TDZ) | Yes (uninitialized, stored in TDZ) |
-| **Re-declaration** | Allowed in the same scope | SyntaxError | SyntaxError |
-| **Re-assignment** | Allowed | Allowed | TypeError |
-| **Global Object Attachment** | Attaches to `window`/`global` | Does NOT attach to global object | Does NOT attach to global object |
+2. **Global Execution Context -** As soon as a javascript code starts running, a global execution context is created and added in the call stack or execution context.
+   The outer most context is Global execution context. variables declared outside of functions are part of this context.
 
-### 2.2 Temporal Dead Zone (TDZ)
-The **TDZ** is the time gap between entering scope and the actual variable declaration where the variable cannot be accessed.
+3. **Functional Execution Context -** in globa execution context, while code execution, if any function invocation is found, a functional execution context is crated.
+
+![Execution Context Diagram](https://www.freecodecamp.org/news/content/images/2022/12/1.png)
+
+### Event Loop, Call Stack and Callback Queue Notes:
+javascript is single threaded and synchronous programming language. It means, it has only one execution stack which is also called as callstack to execute codes.
+However, javascript also handle asynchronous functions. For that, it need to run all codes without blocking main thread.
+event loop helps to handle these asynchronous operations.
+
+![Runtime Environment](https://res.cloudinary.com/slawinski-dev/image/upload/v1648757381/javascript-runtime-environment.png)
+
+1. **Call Stack or Execution Stack -** call stack handles multiple execution contexts. so as soon as an execution context is crated, it is pushed into the call stack. It is poped out after completion.
+   If we have multiple execution context inside one another, then it is stacked on top of each other in the call stack.
+
+2. **Callback Queue(Task Queue) -** Callback queue is a queue data structure. Queue works on FIFO(First in First Out) concept. Whenever a callback function found in the code, it is registered in the Web API environment and time start as given.
+   As soon as timer finish and callback is ready to execute, it will be added in the callback queue.
+
+3. **Micro Task Queue -** Similar to callback queue, all callback related to promises and mutation observer are added in Micro task queue. Micro task queue has high preority than the callback queue.
+
+4. **Event Loop -** Only taks of the event loop is that it keeps checking callstack, micro task queue and callback queue. As soon as callstack is empty, it checks for microtask queue first, it get callback and push it to callstack for execution.
+   once micro task queue is empty, it will check the callback queue and start pushing callbacks one by one to callstack for execution.
+
+---
+
+## 1.4 Closure
+*Source file: `js fundamental/clouser.html`*
+
+### Notes:
+Function along with its lexical scope forms a closure. or in another word -
+A closure is a function having access to the parent scope, even after the parent function has closed.
+
+Clouser is used in - currying, memoize, state in the async, setTimeout.
+
 ```javascript
-function test() {
-    // a is hoisted and initialized to undefined
-    console.log(a); // Output: undefined
-    var a = 9;
-
-    if (a) {
-        // b enters TDZ here at start of block
-        // console.log(b); // ReferenceError: Cannot access 'b' before initialization
-
-        let b = 10; // b exits TDZ here
-        const c = 2;
-
-        // Re-declaration fails:
-        // let b = 30; // SyntaxError: Identifier 'b' has already been declared
-        // const c = 4; // SyntaxError: Identifier 'c' has already been declared
-
-        // Re-assignment:
-        b = 50;   // Valid
-        // c = 100; // TypeError: Assignment to constant variable
-
-        console.log(b); // Output: 50
+function fn1(){
+    let a = 20;
+    return function fn2(){
+        console.log(a);
     }
 }
-test();
+
+let fn2 = fn1();   // here i returned the function fn2 out of function fn1. it has functin
+                    // definition of fn2. 
+fn2()              //now when i call the fn2, it wll still have the value of a:20
 ```
 
-### 2.3 Function Hoisting
-- **Function Declarations** are hoisted with their **entire function body** into memory during the creation phase:
-  ```javascript
-  fn(); // Output: "test from fn" (runs successfully)
+**Lexical Scope -**
+Lexical scope is the ability for a function to access variables from its parent scope.
 
-  function fn() {
-      console.log('test from fn');
-  }
-  ```
-- **Function Expressions / Arrow Functions** behave like variables:
-  ```javascript
-  // exp(); // TypeError: exp is not a function (if declared with var)
-  var exp = function() { console.log("Expression"); };
-
-  // arrow(); // ReferenceError: Cannot access 'arrow' before initialization (if let/const)
-  const arrow = () => { console.log("Arrow"); };
-  ```
-
----
-
-## Step 3: Execution Context & The Event Loop Architecture
-*Reference: [`execution-eventloop.html`](./js%20fundamental/execution-eventloop.html)*
-
-### 3.1 Execution Context Lifecycle
-JavaScript creates an **Execution Context** in two distinct phases:
-1. **Memory Allocation (Creation) Phase:**
-   - Allocates memory for variables (`var` gets `undefined`; `let`/`const` remain uninitialized in TDZ).
-   - Functions are stored with their full definitions.
-   - Sets up the Scope Chain and determines `this`.
-2. **Code Execution Phase:**
-   - Runs code line-by-line.
-   - Assigns actual values to variables and executes function calls.
-
-Two main types:
-- **Global Execution Context (GEC):** Created when JS initializes; outer-most context pushed to Call Stack first.
-- **Functional Execution Context (FEC):** Created on each function invocation and pushed to the Call Stack.
-
-```
-+-------------------------------------------------------------+
-|                      Call Stack                             |
-|  [ FEC: function z()  ] -> popped when done                 |
-|  [ FEC: function y()  ]                                     |
-|  [ FEC: function x()  ]                                     |
-|  [ Global Execution Context ]                               |
-+-------------------------------------------------------------+
-```
-
-### 3.2 The Event Loop, Call Stack, Microtask Queue & Callback Queue
-JavaScript is **single-threaded** and **synchronous** at its core. Concurrency and asynchronous operations are managed via browser **Web APIs** and the **Event Loop**.
-
-```
-+---------------------------------------------------------------------------------+
-|                                 BROWSER / RUNTIME                               |
-|                                                                                 |
-|  +-------------------+       +-----------------------------------------------+  |
-|  |    CALL STACK     |       |                    WEB APIs                   |  |
-|  |  (Single thread)  |       |  setTimeout, fetch(), DOM events, setInterval |  |
-|  +--------+----------+       +-----------------------+-----------------------+  |
-|           ^                                          |                          |
-|           |                                          v                          |
-|     [EVENT LOOP]                      +-----------------------------+           |
-|     Pushes task when stack is empty   |      Microtask Queue        | (HIGH PRIORITY: Promises, MutationObserver, queueMicrotask)
-|           ^                           +-----------------------------+           |
-|           |                                          |                          |
-|           +---------------------------+              v                          |
-|                                       +-----------------------------+           |
-|                                       |   Callback / Task Queue     | (LOWER PRIORITY: setTimeout, setInterval, I/O)
-|                                       +-----------------------------+           |
-+---------------------------------------------------------------------------------+
-```
-
-#### Event Loop Algorithm:
-1. Executes all synchronous code in the **Call Stack**.
-2. When the Call Stack is empty, checks the **Microtask Queue** first. Executes **ALL** microtasks until the queue is completely drained.
-3. Takes the oldest callback from the **Callback Queue (Macrotask Queue)** and pushes it onto the Call Stack.
-4. Repeats the cycle continuously.
-
----
-
-## Step 4: Closures, Lexical Scope & Function Currying
-*Reference: [`clouser.html`](./js%20fundamental/clouser.html)*
-
-### 4.1 What is a Closure?
-> **Definition:** A **closure** is a function bundled together with references to its surrounding lexical state (**Lexical Environment**). It gives an inner function access to an outer function's scope even **after** the outer function has finished executing and returned from the Call Stack.
-
+Example of lexical scope:
 ```javascript
-function fn1() {
-    let a = 20;
-    return function fn2() {
-        console.log(a); // retains reference to 'a'
-    };
+function x(){
+    let a = 10;
+
+    function y(){
+        console.log(a)   // output: 10
+        let b = 5;
+
+        function z(){
+            console.log(a+b); // output: 15
+        }
+        z()
+    }
+    y()
 }
-
-let fn2 = fn1(); // fn1 execution context finishes and pops off Call Stack
-fn2();           // Output: 20
+x()
 ```
 
-### 4.2 Lexical Scope
-Lexical scope means that variable access is determined by the physical placement of variables and blocks in the source code.
+### Complete Code & Questions:
 ```javascript
+// example of lexical scope
 function x() {
     let a = 10;
+
     function y() {
-        console.log(a); // Output: 10 (from outer scope)
+        console.log(a)   // output: 10
         let b = 5;
+
         function z() {
-            console.log(a + b); // Output: 15 (accesses both parent scopes)
+            console.log(a + b); // output: 15
         }
-        z();
+        z()
     }
-    y();
+    y()
 }
-x();
-```
+x()
 
-### 4.3 Practical Interview Coding: Function Currying
-**Currying** is a functional technique of transforming a function with multiple arguments into a sequence of functions each taking a single argument.
+// example of closure
 
-#### Question 1: Basic 3-argument Currying
-```javascript
-function add(a) {
-    return function (b) {
-        return function (c) {
-            return a + b + c;
-        };
-    };
-}
-console.log(add(2)(3)(4)); // Output: 9
-```
-
-#### Question 2: Operator Dispatcher via Currying
-```javascript
-function calculate(operation) {
-    return function (a) {
-        return function (b) {
-            if (operation === 'sum') return a + b;
-            if (operation === 'substract') return a - b;
-            if (operation === 'multiply') return a * b;
-            if (operation === 'divide') return a / b;
-            return "Invalid operation";
-        };
-    };
+function fn1(){
+    let a = 20;
+    return function fn2(){
+        console.log(a);
+    }
 }
 
-console.log(calculate('multiply')(3)(4)); // Output: 12
-console.log(calculate('sum')(10)(5));      // Output: 15
-console.log(calculate('substract')(10)(3));// Output: 7
-console.log(calculate('divide')(10)(2));   // Output: 5
+let fn2 = fn1();   // here i returned the function fn2 out of function fn1. it has functin
+                    // definition of fn2. 
+fn2()              //now when i call the fn2, it wll still have the value of a:20
+
+/**
+ * 
+ * One use of closure is currying functions. let see -
+ * 
+ * */
+
+// currying functions takes only one argument at a time.
+function add(a){
+    return function x(b){
+        return function y(c){
+            return a+b+c;
+        }
+    }
+}
+
+let sum = add(2)(3)(4);
+console.log('currying sum - '+ sum)
+
+/**
+ * Q.- create a function if sum passed, it add next two arguments
+ *     if subtract pass, subtract those and similarly for multiply and division
+ * 
+ * Example - add('sum')(2)(3) // output: 5
+ *           add('substract')(5)(3) // output: 2
+ *          add('multiply')(2)(3) // output: 6
+ *          add('divide')(10)(5) // output: 2
+ * 
+ * */
+
+ function add(operation){
+    return function x(a){
+        return function y(b){
+            if(operation === 'sum'){
+                return a+b
+            }else if(operation === 'substract'){
+                return a-b;
+            }else if(operation === 'multiply'){
+                return a*b;
+            }else if(operation === 'divide'){
+                return a/b;
+            }
+        }
+    }
+ }
+
+ let result = add('multiply')(3)(4);
+ console.log('currying question first-  '+result) // output: 12
 ```
 
 ---
 
-## Step 5: The `this` Keyword & Execution Context Rules
-*Reference: [`this-keyword.md`](./js%20fundamental/this-keyword.md)*
+## 1.5 This Keyword
+*Source file: `js fundamental/this-keyword.md`*
 
-### 5.1 Global Space
-In global space, `this` refers to the global object:
-- **Browser:** `window`
-- **Node.js:** `global`
-- **ES2020 Standard:** `globalThis` works uniformly everywhere.
+### # This in Global Space
+This in Global space returns Global object which can be different depending on where you are running the code. 
+For example, in a browser it will return Window object, inside Node JS it will return Global.
 
 ```javascript
-console.log(this); // window (in browser)
+console.log(this)
 ```
 
-### 5.2 Strict vs Non-Strict Mode
+### ## This keyword works differently in strict and non strict mode
+- In non strict mode:
 ```javascript
-// Non-Strict Mode (default)
-function testNonStrict() {
-    console.log(this); // Output: Window object
+function test(){
+ console.log(this)  // output: Window object
 }
-testNonStrict();
-
-// Strict Mode ("use strict")
-function testStrict() {
-    "use strict";
-    console.log(this); // Output: undefined
-}
-testStrict();
 ```
-*Why?* In strict mode, `this` substitution is disabled. If a function is called without an object reference (e.g. `fn()`), `this` remains `undefined`.
 
-### 5.3 Function Invocation Context Summary
-1. **Method Call:** `obj.method()` -> `this` points to `obj`.
-2. **Plain Function Call:** `fn()` -> `window` (non-strict) or `undefined` (strict).
-3. **Constructor Call:** `new Fn()` -> `this` points to the newly instantiated object.
-4. **Arrow Function:** Does not have its own `this`; lexically inherits `this` from enclosing scope.
-5. **Explicit Binding:** `.call()`, `.apply()`, `.bind()`.
+- In Strict mode:
+```javascript
+function test(){
+ console.log(this)  // output: undefined
+}
+```
 
 ---
 
-## Step 6: Asynchronous JavaScript (Callbacks, Promises, Async/Await)
-*References: [`callback.html`](./asynjs/callback.html), [`promise.html`](./asynjs/promise.html), [`async-await.html`](./asynjs/async-await.html)*
+## 1.6 Event Handling: Bubbling & Capturing
+*Source file: `js fundamental/event-handling.html`*
 
-### 6.1 Callbacks and Their Pitfalls
-A **callback** is a function passed as an argument to another function to be executed later.
+### Notes:
+Event listner accepts 3 parameters -
+1. **Event Name -** for example: click, mouseover,etc
+2. **Callback Function -** A callback function which executes on event
+3. **useCapture flag -** it takes true/false. By default its false means bubbling. if you want to use capturing, then make it true.
+
+To stop event propogation, we can use `event.stopPropagation()`
+
+1. **Event Bubbling -** event Bubbling is the concept where event flow from the clicked element to upward direction through its ansesstors. Example:
 ```javascript
+document.querySelector('#child').addEventListener('click',function(){
+    console.log('child clicked');
+},false) // add false or leave blank
+```
+
+2. **Event Capturing -** In event capturing, event flow from root element to the click element. Example:
+```javascript
+document.querySelector('#child').addEventListener('click',function(){
+    console.log('child clicked');
+},true)
+```
+
+### Code Example:
+```javascript
+document.querySelector('#grand-parent').addEventListener('click',()=>{
+    console.log('grand parent clicked')
+},true)
+
+document.querySelector('#parent').addEventListener('click',()=>{
+    console.log('parent clicked')
+})
+
+document.querySelector('#child').addEventListener('click',()=>{
+    console.log('Child clicked')
+})
+```
+
+---
+
+## 1.7 Debouncing & Throttling
+*Source file: `js fundamental/debouncing-throttling.html`*
+
+### Notes:
+It is used for performance optimization. it can be used where we have frequent events like resizing, input events or scrolling.
+It is used to control the rate at which a particular function is executed.
+
+1. **Debouncing -** In Debouncing we set a particular time, if no event is triggered within the time, function will be called.
+   So what it does is, it will not contineously call the function if event is triggering frequently. It will call the fun only if event is not triggered till the time set.
+
+2. **Throttling -** In Throttling, instead of waiting for a particular time to call the function, we call function on a specific interval if contineous event triggering is happening.
+
+- `=>` Use debouncing when you want to delay the execution of a function until a pause in events occurs.
+- `=>` Use throttling when you want to limit the rate at which a function is executed, ensuring it doesn't happen more frequently than a specified interval.
+
+### Code:
+```javascript
+document.addEventListener('input', function(event){
+  let val = event.target.value;
+  let dval = debounce(event);
+  document.getElementById('normal').append(val)
+  document.getElementById('debounce').append(dval)
+  document.getElementById('throttle').append(val)
+})
+```
+
+---
+
+# 2. Asynchronous JavaScript (`asynjs`)
+
+## 2.1 CallBack
+*Source file: `asynjs/callback.html`*
+
+### Notes:
+1. **Callback -** A callback function is a function passed into another function as an argument, which is then invoked inside the outer function to complete some kind of routine or action.
+2. **Problem in Callback -** 1st problem with callback function is the callback hell and the second problem is inversion of control.
+   In inversion of control, we loose our control from the code because we are passing the callback function in another function and don't know what inside that function, when that will execute, execute or not. so we are blindly trusting on that.
+3. **Callback Hell -** When we have nested callbacks, the code structure grows horizontally. This type of code is know as callack hell or piramid of doom. Callback hell can be fixed with promise chaining.
+
+### Code:
+```javascript
+// example of callback fun
+function moringTime() {
+    console.log('its morning time');
+    function wakeup() {
+        console.log('Good Morning');
+    }
+    wakeup()
+}
+
+moringTime()
+
+
+// second example of callback
+
 function nightTime(greeting, callback) {
     console.log(greeting);
-    callback();
+    callback()
 }
+
 function sleep() {
-    console.log('sleeping');
+    console.log('sleeping')
 }
-nightTime('Good Night', sleep);
-```
 
-#### Two Major Problems with Callbacks:
-1. **Callback Hell (Pyramid of Doom):** Deeply nested callbacks make code hard to read, maintain, and debug:
-   ```javascript
-   createOrder(cart, function (orderId) {
-       proceedPayment(orderId, function (paymentInfo) {
-           proceedOrder(paymentInfo, function () {
-               updateBalance();
-           });
-       });
-   });
-   ```
-2. **Inversion of Control:** You hand over the execution of your callback to another function. You lose control over when, how many times, or if the callback will ever be called.
+nightTime('Good Night', sleep)
+
+
+// Creating callback hell
+
+createOrder(cart, function (orderId) {
+    proceedPayment(orderId, function (paymentInfo) {
+        proceedOrder(paymentInfo, function () {
+            updateBalance();
+        })
+    })
+})
+```
 
 ---
 
-### 6.2 Promises: Anatomy & State Machine
-A **Promise** is an object representing the eventual completion (fulfillment) or failure of an asynchronous operation.
-- **States:** `pending`, `fulfilled`, `rejected`.
-- **Properties:** Immutable once settled; guarantees execution of callbacks registered via `.then()`, `.catch()`, or `.finally()`.
+## 2.2 Promise
+*Source file: `asynjs/promise.html`*
 
-#### Custom Promise Example (Coffee Shop):
+### Notes:
+1. **Promise -** A promise is an object which represents an eventual completion or failure of an asynchronus operation. It has three state - pending, fulfilled and rejected. when we create promise, it returns an object which status pending and a value of undefined.
+2. **Why Promise -** Before promise, callback functions were used for asynchronous operations. The major problem with that is:
+   1. If we chain multiple callback functions inside one another it creates a piramid like structure which is called callback hell or piramid of doom.
+   2. Inversion of control.
+   A promise resolves only once and it is immutable. we can chain promise using `.then`
+3. **Promise.all -** Promise.all APi takes an iterable or we can say array of promises and execute them parallely. It waits for all promise to resolve and returns an array of result. If any promise is rejected, it immediately throws an error.
+   it is also known as fail fast and all or none.
+4. **Promise.allSetteled -** It is similar to Promise.all but the difference is that even if a promise reject, it still wait for all other promises to settle and at the end it returns an array with all results. So it is not going to throw an error and stop if any promise rejected. It will wait for all to finish and settle.
+5. **Promise.race -** It works like a race. So it will give the result of the promise which settled first. No matter whether it is rejected or resolved.
+6. **Promise.any -** it is first success seeking API. it waits for the first resolved promise and return the result. If all promise rejected, it returns an agreegate error.
+   if you want to see all errors, do like this -
+   `catch((err)=>{console.log(err.errors)})`
+
+### Code:
 ```javascript
+// creating a program for coffeesho using promise
+
+const coffeeshop = {
+    coffee: ['capachino', 'late'],
+    isOpen: true
+}
+
 function orderCoffee(coffeeName) {
-    return new Promise((resolve, reject) => {
-        if (coffeeName === 'cappuccino' || coffeeName === 'latte') {
-            resolve('Order placed successfully');
+    let order = new Promise((resolve, reject) => {
+        if (coffeeName === 'capachino' || coffeeName === 'late') {
+            resolve('order placed');
         } else {
-            reject(new Error(`${coffeeName} is not available`));
+            const err = new Error(`${coffeeName} is not available now`);
+            reject(err)
         }
-    });
+    })
+    return order;
 }
 
-orderCoffee('latte')
-    .then((result) => console.log(result))   // Output: Order placed successfully
-    .catch((error) => console.error(error.message));
+let placedOrder = orderCoffee('ed');
+placedOrder.then((result) => {
+    console.log(result)
+})
+    .catch((error) => {
+        console.log(error.message);
+    })
+
+
+// code for promise API(promise.all, allSetteled, any, reace)
+
+//lets create some dummy promises first
+let p1 = new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+        resolve('p1 resolved')
+    },3000)
+})
+
+let p2 = new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+        reject('p2 resolved')
+    },2000)
+})
+
+let p3 = new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+        resolve('p3 resolved')
+    },1000)
+})
+
+// lets test Promise.all with the above dummy promises
+
+Promise.all([p1,p2,p3]).then((result)=>{
+    console.log(result)
+})
+.catch((err)=>{
+    console.error(err)
+})
 ```
 
 ---
 
-### 6.3 Promise Combinators Cheat Sheet
+## 2.3 Async Await
+*Source file: `asynjs/async-await.html`*
 
-| Method | Behavior | Resolves When | Rejects When | Error Output |
-| :--- | :--- | :--- | :--- | :--- |
-| **`Promise.all`** | "All or nothing" (Fail-fast) | **All** promises resolve | **Any** single promise rejects | Immediate first rejection error |
-| **`Promise.allSettled`** | Comprehensive settlement | **All** promises settle (resolve or reject) | Never rejects | Array of `{ status, value/reason }` |
-| **`Promise.race`** | First settled | **First** promise settles (resolve OR reject) | **First** promise settles with reject | Value or error of fastest promise |
-| **`Promise.any`** | First success seeking | **First** promise resolves | **All** promises reject | `AggregateError: All promises were rejected` |
+### Notes:
+1. **Asyn Function -** Asyn function always return a promise. if you hava a promise written inside the fun then it will return that. If its a simple code, it will wrap that in a promise and then return it.
+   `await` can only be used inside async function.
+2. **How async and await works behind the scene -** whenever js engine see an await inside async function, it suspends the function execution from callstack. once promise is resolved, that function will come again in call stack and execute from where it left.
+3. **Error Handeling -** We use try catch to handle error while using async and await we can also use `.catch` as we were doing with Promise.
 
+### Code:
 ```javascript
-const p1 = new Promise((resolve) => setTimeout(() => resolve('p1 resolved'), 3000));
-const p2 = new Promise((_, reject) => setTimeout(() => reject('p2 rejected'), 2000));
-const p3 = new Promise((resolve) => setTimeout(() => resolve('p3 resolved'), 1000));
+// create asyn function and handle error using try catch
 
-// Promise.all rejects after 2s because p2 rejects
-Promise.all([p1, p2, p3])
-    .then(console.log)
-    .catch((err) => console.error("Promise.all caught:", err)); // Output: Promise.all caught: p2 rejected
+let p1 = new Promise((resolve, reject)=>{
+    setTimeout(()=>{
+        reject('Promise resolved after 2 sec');
+    },2000)
+})
 
-// Inspecting AggregateError with Promise.any:
-Promise.any([p2])
-    .catch((err) => {
-        console.log(err.errors); // Array of rejection reasons
-    });
-```
 
----
-
-### 6.4 `async` / `await` Under the Hood
-- `async` keyword ensures that the function **always returns a Promise**. Non-promise returns are automatically wrapped in `Promise.resolve()`.
-- `await` pauses execution inside the function body without blocking the main browser thread. The JavaScript engine suspends the async function, pops it from the Call Stack, and re-enqueues it when the awaited Promise resolves.
-
-```javascript
-let p1 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        resolve('Promise resolved after 2 sec');
-    }, 2000);
-});
-
-async function testAsync() {
+async function Test(){
     try {
-        console.log('Async function started');
-        let data = await p1; // Function suspends here for 2s
-        console.log(data);   // Output: Promise resolved after 2 sec
+        console.log('asyn function resolved');
+        let data = await p1;
+        console.log(data)
     } catch (error) {
-        console.error('Handled Error:', error);
+        console.error(error)
     }
+    
 }
-testAsync();
+Test()
 ```
 
 ---
 
-## Step 7: Core JavaScript Polyfills (Live Coding / Machine Coding)
-*Reference: [`polyfills.html`](./functional%20programming/polyfills.html)*
+# 3. Functional Programming
 
-Writing custom polyfills is one of the most common frontend machine coding rounds. Here are production-grade implementations of the core methods.
+## 3.1 Important Polyfills
+*Source file: `functional programming/polyfills.html`*
 
-### 7.1 `Array.prototype.map`
-- **Spec:** Takes a callback `(element, index, array)` and returns a new mapped array.
+### 1. Polyfill of map function
+- 1. it takes an array
+- 2. it returns an array
+- 3. runs a callback function for each element of the array
+
 ```javascript
-Array.prototype.myMap = function(callback) {
-    if (typeof callback !== 'function') {
-        throw new TypeError(callback + ' is not a function');
-    }
+Array.prototype.myMap = function(callback){
     let res = [];
-    for (let i = 0; i < this.length; i++) {
-        // Handle sparse arrays (holes)
-        if (i in this) {
-            res.push(callback(this[i], i, this));
-        }
+    for(let i=0; i<this.length; i++){
+        let op = callback(this[i]);
+        res.push(op);
     }
-    return res;
-};
 
-// Test
-console.log([1, 2, 3].myMap(x => x * 2)); // [2, 4, 6]
+    return res;
+}
 ```
 
-### 7.2 `Array.prototype.filter`
-- **Spec:** Takes a predicate callback; returns a new array with elements returning truthy.
+### 2. Polyfill of filter function
+- 1. it takes an array
+- 2. it returns an array
+- 3. runs a callback function for each element of the array
+
 ```javascript
-Array.prototype.myFilter = function(callback) {
-    if (typeof callback !== 'function') {
-        throw new TypeError(callback + ' is not a function');
-    }
+Array.prototype.myFilter = function(callback){
     let res = [];
-    for (let i = 0; i < this.length; i++) {
-        if (i in this && callback(this[i], i, this)) {
+    for(let i=0; i<this.length; i++){
+        if(callback(this[i])){
             res.push(this[i]);
         }
     }
     return res;
-};
-
-// Test
-console.log([1, 2, 3, 4, 5].myFilter(x => x % 2 === 0)); // [2, 4]
+}
 ```
 
-### 7.3 `Array.prototype.forEach`
-- **Spec:** Executes callback for each element; returns `undefined`.
+### 3. Polyfill of forEach function
+- 1. it takes an array
+- 2. it returns element one by one
+- 3. runs a callback function for each element of the array
+
 ```javascript
-Array.prototype.myForEach = function(callback) {
-    if (typeof callback !== 'function') {
-        throw new TypeError(callback + ' is not a function');
+Array.prototype.myForEach = function(callback){
+
+    for(let i=0; i<this.length; i++){
+        callback(this[i]);
     }
-    for (let i = 0; i < this.length; i++) {
-        if (i in this) {
-            callback(this[i], i, this);
-        }
-    }
-};
+}
 ```
 
-### 7.4 `Array.prototype.reduce`
-- **Spec:** Takes `(callback, initialValue)`. If no initial value is passed, the first element becomes the accumulator and iteration starts at index 1.
+### 4. Polyfill of reduce function
+- 1. it takes an array
+- 2. it returns a single element
+- 3. runs a callback function for each element of the array
+- 4. it takes an initial value which is optional
+- 5. in the callback it takes - accumulator and current value
+
 ```javascript
-Array.prototype.myReduce = function(callback, initialValue) {
-    if (typeof callback !== 'function') {
-        throw new TypeError(callback + ' is not a function');
-    }
+Array.prototype.myReduce = function(callback, initial){
     let acc;
     let firstIdx;
 
-    if (arguments.length > 1) {
-        acc = initialValue;
-        firstIdx = 0;
-    } else {
-        if (this.length === 0) {
-            throw new TypeError('Reduce of empty array with no initial value');
-        }
+    if(arguments.length === 1){
         acc = this[0];
         firstIdx = 1;
+    }else{
+        acc = initial;
+        firstIdx = 0
     }
 
-    for (let i = firstIdx; i < this.length; i++) {
-        if (i in this) {
-            acc = callback(acc, this[i], i, this);
-        }
+    for(let i=firstIdx; i<this.length; i++){
+        acc = callback(acc,this[i]);
     }
+
     return acc;
-};
-
-// Test
-console.log([1, 2, 3, 4].myReduce((acc, curr) => acc + curr, 10)); // 20
-console.log([1, 2, 3, 4].myReduce((acc, curr) => acc + curr));     // 10
+}
 ```
 
-### 7.5 `Function.prototype.call`
-- **Spec:** Binds `this` to the target context and executes immediately with comma-separated arguments.
+### 5. Polyfill of call function
+- 1. it takes an object, arguments as iterable
+- 2. it call the functions for provided object
+
 ```javascript
-Function.prototype.myCall = function(context = {}, ...args) {
-    if (typeof this !== 'function') {
-        throw new TypeError(this + ' is not callable');
+Function.prototype.myCall = function(context={}, ...args){
+    if(typeof this !== 'function'){
+        throw new Error(this+'is not callable');
     }
-    // Convert primitive context (string/number) to object, or fallback to globalThis
-    context = (context !== null && context !== undefined) ? Object(context) : globalThis;
-
-    // Use Symbol to avoid overwriting existing properties
-    const fnKey = Symbol();
-    context[fnKey] = this;
-    const result = context[fnKey](...args);
-    delete context[fnKey];
-    return result;
-};
+    context.fn = this;
+    context.fn(...args)
+}
 ```
 
-### 7.6 `Function.prototype.apply`
-- **Spec:** Same as `.call`, but accepts arguments as an Array.
+### 6. Polyfill of apply function
+- 1. it takes an object,
+- 2. it takes array as argument
+- 3. it call the functions for provided object
+
 ```javascript
-Function.prototype.myApply = function(context = {}, args = []) {
-    if (typeof this !== 'function') {
-        throw new TypeError(this + ' is not callable');
+Function.prototype.myApply = function(context={}, arg=[]){
+    if(typeof this !== 'function'){
+        throw new Error(this+' is not callable')
     }
-    if (!Array.isArray(args)) {
-        throw new TypeError('CreateListFromArrayLike called on non-object');
+    if(!Array.isArray(arg)){
+        throw new Error(arg + ' is not an array');
     }
-    context = (context !== null && context !== undefined) ? Object(context) : globalThis;
 
-    const fnKey = Symbol();
-    context[fnKey] = this;
-    const result = context[fnKey](...args);
-    delete context[fnKey];
-    return result;
-};
+    context.fn = this;
+    context.fn(...arg)
+}
 ```
 
-### 7.7 `Function.prototype.bind`
-- **Spec:** Returns a new function with bound context and partially applied arguments (currying support).
+### 7. Polyfill of bind function
+- 1. it takes an object,
+- 2. it takes multiple arguments
+- 3. it returns a function binded with the object
+
 ```javascript
 Function.prototype.myBind = function(context = {}, ...args) {
     if (typeof this !== 'function') {
-        throw new TypeError(this + ' is not callable');
+        throw new Error(this + ' is not callable');
     }
+
     const originalFunction = this;
 
-    return function(...args2) {
-        return originalFunction.apply(context, [...args, ...args2]);
+    return function (...args2) {
+        return originalFunction.apply(context, [...args,...args2]);
     };
 };
-
-// Test
-const user = { name: "Mrityunjay" };
-function greet(greeting, punctuation) {
-    return `${greeting}, ${this.name}${punctuation}`;
-}
-const boundGreet = greet.myBind(user, "Hello");
-console.log(boundGreet("!")); // "Hello, Mrityunjay!"
 ```
 
-### 7.8 `Promise.all`
-- **Spec:** Resolves when all promises resolve. Rejects immediately if any promise rejects. Resolves with an empty array if an empty iterable is provided.
+### 8. Polyfill of promise.all function
+- 1. it takes an an array of promise,
+- 2. if all promises are resolved, it returns array with output
+- 3. if any promise rejects, it returns error with rejected promise
+
 ```javascript
-Promise.myAll = function(promiseArr) {
-    if (!Array.isArray(promiseArr)) {
-        return Promise.reject(new TypeError(promiseArr + ' is not iterable'));
+Promise.myAll = function(promiseArr){
+    if(!Array.isArray(promiseArr)){
+        throw new Error(promiseArr + ' is not an array');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject)=>{
         let result = [];
-        let completed = 0;
+        let count = 0;
 
-        if (promiseArr.length === 0) {
-            return resolve(result);
+        for(let i=0; i<promiseArr.length; i++){
+            promiseArr[i].then((data)=>{
+                result[i] = data;
+                count++;
+
+                if(count === promiseArr.length){
+                    resolve(result);
+                }
+
+            }).catch((error)=>{
+                reject(error);
+            })
         }
 
-        for (let i = 0; i < promiseArr.length; i++) {
-            // Wrap in Promise.resolve to handle primitive/non-promise items
-            Promise.resolve(promiseArr[i])
-                .then((data) => {
-                    result[i] = data; // Maintain correct order
-                    completed++;
-                    if (completed === promiseArr.length) {
-                        resolve(result);
-                    }
-                })
-                .catch((error) => {
-                    reject(error); // Fail fast
-                });
+        if(promiseArr.length === 0){
+            resolve(result)
         }
-    });
-};
+    })
+}
 
-// Test
-const pa = Promise.resolve("A");
-const pb = new Promise(res => setTimeout(() => res("B"), 100));
-Promise.myAll([pa, pb]).then(console.log); // ["A", "B"]
+// Test promises
+let p1 = new Promise((resolve, reject)=>{
+    resolve('first promise resolved');
+})
+let p2 = new Promise((resolve, reject)=>{
+    resolve('second promise resolved');
+})
+let p3 = new Promise((resolve, reject)=>{
+    resolve('third promise resolved');
+})
+
+Promise.myAll([]).then((data)=>{
+    console.log(data)
+}).catch(err=>{
+    console.error(err)
+})
 ```
 
 ---
 
-## Step 8: DOM Events (Bubbling, Capturing, Propagation)
-*Reference: [`event-handling.html`](./js%20fundamental/event-handling.html)*
+# 4. Object-Oriented Programming (`oops`)
 
-### 8.1 The 3 Phases of Event Propagation
-```
-       | |  1. Capturing Phase (Trickling down from window -> document -> body -> parent)
-       v |
-    [ TARGET ] 2. Target Phase (Triggered on target element)
-       | ^
-       | |  3. Bubbling Phase (Bubbling up from child -> parent -> body -> window)
-```
+## 4.1 Function Constructor and Inheritance
+*Source file: `oops/functionConstructor.html`*
 
-### 8.2 `addEventListener` Syntax
+### Code:
 ```javascript
-target.addEventListener(eventType, callback, useCapture);
-```
-- `useCapture`: Boolean (default is `false`).
-  - `false` -> Registers listener in the **Bubbling Phase**.
-  - `true` -> Registers listener in the **Capturing Phase**.
+function Person(fname, lname, age){
+    this.fname = fname,
+    this.lname = lname,
+    this.age = age
 
-### 8.3 Propagation Walkthrough
-Consider the nested structure: `#grand-parent > #parent > #child`:
-```javascript
-document.querySelector('#grand-parent').addEventListener('click', () => {
-    console.log('Grand Parent (Capturing)');
-}, true); // Capturing phase
-
-document.querySelector('#parent').addEventListener('click', () => {
-    console.log('Parent (Bubbling)');
-}, false); // Bubbling phase
-
-document.querySelector('#child').addEventListener('click', () => {
-    console.log('Child (Bubbling)');
-}, false); // Bubbling phase
-```
-
-When clicking on `#child`, the console logs:
-1. `"Grand Parent (Capturing)"` (captured first on way down)
-2. `"Child (Bubbling)"` (reached target)
-3. `"Parent (Bubbling)"` (bubbled upwards to parent)
-
-### 8.4 Stopping Propagation
-- `event.stopPropagation()` stops the event from propagating further in either direction (bubbling or capturing).
-- `event.stopImmediatePropagation()` also prevents other listeners attached to the *same* element for the *same* event from executing.
-- `event.preventDefault()` stops default browser behavior (e.g. form submission, link navigation), without stopping event propagation.
-
----
-
-## Step 9: Performance Optimization (Debouncing vs Throttling)
-*Reference: [`debouncing-throttling.html`](./js%20fundamental/debouncing-throttling.html)*
-
-Both techniques limit the rate at which functions execute during frequent events (`scroll`, `resize`, `input`, `mousemove`).
-
-```
-Trigger stream:   ||||||||||||||||||||||||||||... (pause)
-Debounce (delay): ............................|   (executes once after pause)
-Throttle (limit): |----|----|----|----|----|      (executes once per regular interval)
-```
-
-| Technique | Mental Model | Best Use Case |
-| :--- | :--- | :--- |
-| **Debounce** | "Wait until user stops typing/resizing for X milliseconds before running." | Search autocomplete, window resize recalculations, form autosave. |
-| **Throttle** | "Execute at most once every X milliseconds while events continue firing." | Infinite scrolling, mousemove games, video playback progress tracking. |
-
-### 9.1 Debounce Implementation
-```javascript
-function debounce(fn, delay) {
-    let timerId;
-    return function (...args) {
-        clearTimeout(timerId); // Reset timer on every trigger
-        timerId = setTimeout(() => {
-            fn.apply(this, args);
-        }, delay);
-    };
-}
-
-// Usage with input
-const handleInput = debounce((event) => {
-    console.log("Fetching search results for:", event.target.value);
-}, 500);
-```
-
-### 9.2 Throttle Implementation
-```javascript
-function throttle(fn, limit) {
-    let lastRan = 0;
-    return function (...args) {
-        const now = Date.now();
-        if (now - lastRan >= limit) {
-            fn.apply(this, args);
-            lastRan = now;
-        }
-    };
-}
-
-// Usage with scroll
-const handleScroll = throttle(() => {
-    console.log("Scroll position checked at:", window.scrollY);
-}, 200);
-```
-
----
-
-## Step 10: Object-Oriented JavaScript (Constructor Functions vs ES6 Classes)
-*References: [`functionConstructor.html`](./oops/functionConstructor.html), [`class.html`](./oops/class.html)*
-
-### 10.1 Constructor Functions & Prototypal Inheritance (ES5)
-```javascript
-// Base Constructor
-function Person(fname, lname, age) {
-    this.fname = fname;
-    this.lname = lname;
-    this.age = age;
-}
-
-// Attaching methods to Prototype prevents duplicating methods in memory
-Person.prototype.greeting = function() {
-    return `Hello ${this.fname} ${this.lname}`;
-};
-
-// Derived Constructor
-function Student(fname, lname, age, psp, batch) {
-    // Call parent constructor with current context (super call)
-    Person.call(this, fname, lname, age);
-    this.psp = psp;
-    this.batch = batch;
-}
-
-// Inherit prototype methods
-Student.prototype = Object.create(Person.prototype);
-Student.prototype.constructor = Student;
-
-const student1 = new Student('Mrityunjay', 'Mishra', 27, 81.00, 'Full Stack');
-console.log(student1.greeting()); // "Hello Mrityunjay Mishra"
-```
-
-### 10.2 ES6 Classes, Getters, Setters & Inheritance
-ES6 classes are syntactical sugar over JavaScript's existing prototype-based inheritance model.
-
-```javascript
-class Person {
-    constructor(fname, lname, age, occupation) {
-        this.fname = fname;
-        this.lname = lname;
-        this.age = age;
-        this.occupation = occupation;
+    this.greeting = function(){
+       return `hello ${fname}`
     }
+}
 
-    walk() {
+function Students(fname,lname,age,psp,batch){
+    Person.call(this,fname,lname,age)
+    this.psp = psp,
+    this.batch = batch
+}
+
+let student1 = new Students('Mrityunjay','Mishra',27,81.00,'full stack')
+console.log(student1.greeting())
+```
+
+---
+
+## 4.2 Classes
+*Source file: `oops/class.html`*
+
+### Code:
+```javascript
+//Creating class
+class Person{
+    constructor(fname,lname,age,occupation){
+        this.fname = fname,
+        this.lname = lname,
+        this.age = age,
+        this.occupation = occupation
+    }
+    walk(){
         console.log(`${this.fname} ${this.lname} is walking`);
     }
 
-    // Getter
-    get Fullname() {
-        return `${this.fname} ${this.lname}`;
+    // Defining getter function 
+    get Fullname(){
+        console.log(`Full Name -> ${this.fname} ${this.lname}`)
     }
 
-    // Setter
-    set newAge(age) {
-        if (age <= 0) throw new Error("Invalid age");
+    // Defining setter function
+    set newAge(age){
         this.age = age;
     }
 }
 
-// Subclass inheritance using extends and super
-class Students extends Person {
-    constructor(fname, lname, age, occupation, psp, batch) {
-        super(fname, lname, age, occupation); // Must call super before using 'this'
+// creating object
+let Mrityunjay = new Person('Mrityunjay','Mishra',28, 'web developer');
+
+console.log(Mrityunjay.age)
+Mrityunjay.Fullname;
+
+Mrityunjay.newAge = 27;
+console.log(Mrityunjay.age)
+
+// Inheritance of class
+
+class Students extends Person{
+    constructor(fname,lname,age,occupation,psp,batch){
+        super(fname,lname,age,occupation);
         this.psp = psp;
         this.batch = batch;
     }
 }
 
-const s1 = new Students('Mukesh', 'Singh', 28, 'Engineer', 99.00, 'Fullstack');
-console.log(s1.Fullname); // Getter called: "Mukesh Singh"
-s1.newAge = 29;           // Setter called
-console.log(s1.age);      // 29
-s1.walk();                // Method called: "Mukesh Singh is walking"
+let student1 = new Students('Mukesh','Singh',28, null, 99.00, 'fullstack')
+console.log(student1)
+student1.walk()
 ```
-
----
-
-## Step 11: Top Tricky Output & Rapid-Fire Interview Questions
-
-### Question 1: Async Task Order (Event Loop)
-```javascript
-console.log("1");
-
-setTimeout(() => {
-    console.log("2");
-}, 0);
-
-Promise.resolve().then(() => {
-    console.log("3");
-});
-
-console.log("4");
-```
-**Output:** `1`, `4`, `3`, `2`
-- **Explanation:**
-  1. Synchronous code executes first: `"1"` and `"4"`.
-  2. `setTimeout` callback goes to the Callback Queue (macrotask).
-  3. `Promise.then` callback goes to the Microtask Queue.
-  4. Microtasks take priority over macrotasks: `"3"` prints before `"2"`.
-
----
-
-### Question 2: Closure inside `for` Loop with `var` vs `let`
-```javascript
-// With var:
-for (var i = 0; i < 3; i++) {
-    setTimeout(() => console.log(i), 100);
-}
-// Output: 3, 3, 3 (var is function scoped; all timers refer to the same mutated 'i')
-
-// With let:
-for (let j = 0; j < 3; j++) {
-    setTimeout(() => console.log(j), 100);
-}
-// Output: 0, 1, 2 (let is block-scoped; each iteration creates a new binding for 'j')
-```
-
----
-
-### Question 3: Output of `this` in Arrow Function vs Regular Function
-```javascript
-const obj = {
-    name: "JavaScript",
-    regularFn: function() {
-        console.log(this.name);
-    },
-    arrowFn: () => {
-        console.log(this.name);
-    }
-};
-
-obj.regularFn(); // Output: "JavaScript"
-obj.arrowFn();   // Output: undefined (or window.name in browser)
-```
-- **Explanation:** Arrow functions do not bind their own `this`. They capture `this` from the enclosing lexical context where `obj` was defined (the global scope).
-
----
-
-### Question 4: Object mutation through references
-```javascript
-let user1 = { name: "John", details: { age: 25 } };
-let user2 = { ...user1 }; // Shallow copy
-
-user2.name = "Alice";
-user2.details.age = 30;
-
-console.log(user1.name);        // "John" (primitive string was shallow copied)
-console.log(user1.details.age); // 30 (nested object reference was shared!)
-```
-- **Follow-up:** How do you make a deep clone?
-  - `structuredClone(user1)` (Modern standard built into browsers and Node 17+)
-  - `JSON.parse(JSON.stringify(user1))` (Has limitations: loses functions, symbols, circular references)

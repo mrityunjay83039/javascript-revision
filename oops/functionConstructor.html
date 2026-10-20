@@ -14,6 +14,30 @@
     </style>
 </head>
 <body>
+    <h1>Function Constructor and Inheritance</h1>
+    <ol>
+        <li>
+            <p><strong>Constructor Function - </strong>A constructor function is a regular function used as a blueprint to create multiple objects with similar properties and methods. By convention, it starts with a capital letter and is invoked with the <code>new</code> keyword.</p>
+        </li>
+        <li>
+            <p><strong>What the <code>new</code> Keyword Does - </strong>
+            1. Creates a new empty object <code>{}</code> in memory.<br>
+            2. Links the object's prototype to the constructor's prototype (<code>obj.__proto__ = Constructor.prototype</code>).<br>
+            3. Binds <code>this</code> inside the constructor to this new object.<br>
+            4. Executes constructor code and returns the new object automatically.
+            </p>
+        </li>
+        <li>
+            <p><strong>Inheritance with <code>call()</code> (Constructor Stealing) - </strong>
+            To inherit properties from another constructor, we call <code>Person.call(this, fname, lname, age)</code> inside <code>Students</code>. This passes the new student instance context to <code>Person</code>, initializing the inherited properties.
+            </p>
+        </li>
+        <li>
+            <p><strong>Methods in Constructor vs Prototype - </strong>
+            Defining methods inside the constructor (like <code>this.greeting</code>) creates a separate copy of that function for every instance in memory. To optimize memory, methods should be attached to <code>Person.prototype</code> so all instances share a single copy via the prototype chain.
+            </p>
+        </li>
+    </ol>
     <pre>
         function Person(fname, lname, age){
             this.fname = fname,

@@ -565,8 +565,7 @@ async function displayLatestComment() {
 1. **Promise -** A promise is an object which represents an eventual completion or failure of an asynchronus operation. It has three state - pending, fulfilled and rejected. when we create promise, it returns an object which status pending and a value of undefined.
 2. **Why Promise -** Before promise, callback functions were used for asynchronous operations. The major problem with that is:
    1. If we chain multiple callback functions inside one another it creates a piramid like structure which is called callback hell or piramid of doom.
-   2. Inversion of control.
-   A promise resolves only once and it is immutable. we can chain promise using `.then`
+   2. Inversion of Control means we hand over our callback function to an external API and blindly trust it to execute our code properly—it might call our callback twice, never call it, or swallow errors.
 3. **Promise.all -** Promise.all APi takes an iterable or we can say array of promises and execute them parallely. It waits for all promise to resolve and returns an array of result. If any promise is rejected, it immediately throws an error.
    it is also known as fail fast and all or none.
 4. **Promise.allSetteled -** It is similar to Promise.all but the difference is that even if a promise reject, it still wait for all other promises to settle and at the end it returns an array with all results. So it is not going to throw an error and stop if any promise rejected. It will wait for all to finish and settle.
@@ -865,6 +864,40 @@ Promise.myAll([]).then((data)=>{
 
 ## 4.1 Function Constructor and Inheritance
 *Source file: `oops/functionConstructor.html`*
+
+### Notes:
+1. **Constructor Function -**
+   - A Constructor Function is a regular function used as a blueprint to create multiple objects with similar properties and methods.
+   - By convention, constructor function names start with a capital letter (e.g., `Person`, `Students`).
+   - It is always invoked using the `new` keyword.
+
+2. **What the `new` Keyword Does Behind the Scenes -**
+   When a constructor function is invoked with `new`, JavaScript performs 4 steps:
+   1. **Creates an empty object:** An empty object `{}` is created in memory.
+   2. **Links Prototype:** Sets the internal `__proto__` of this new object to the constructor's `prototype` (`newObj.__proto__ = Person.prototype`).
+   3. **Binds `this`:** Binds `this` inside the constructor to point to the newly created object.
+   4. **Executes and Returns:** Executes the code inside the constructor function (attaching properties to `this`), and returns the new object automatically (unless another object is explicitly returned).
+
+3. **Inheritance using `call()` (Constructor Stealing / Borrowing) -**
+   - To achieve inheritance with constructor functions, we use `Person.call(this, fname, lname, age)`.
+   - `call(this, ...)` executes the `Person` constructor by explicitly passing the `this` context of the newly created `Student` instance.
+   - This initializes `fname`, `lname`, and `age` on the student object, allowing `Student` to reuse `Person`'s initialization logic.
+   - `Students` then attaches its own specific properties (`this.psp`, `this.batch`).
+
+4. **Important Interview Concept: Methods inside Constructor vs on Prototype -**
+   - In the snippet below, `this.greeting = function() { ... }` is defined **inside** the constructor.
+   - **Drawback:** Every time a new student instance is created, a brand new copy of the `greeting` function is allocated in memory. If you have 10,000 instances, there will be 10,000 separate function copies.
+   - **Optimization (Prototypal Inheritance):** Shared methods should be placed on `Person.prototype` so that all instances share a single function reference via the prototype chain:
+     ```javascript
+     // Memory-efficient: Defined once, shared across all instances
+     Person.prototype.greeting = function() {
+         return `hello ${this.fname}`;
+     };
+
+     // Linking prototypes for full prototypal inheritance:
+     Students.prototype = Object.create(Person.prototype);
+     Students.prototype.constructor = Students;
+     ```
 
 ### Code:
 ```javascript

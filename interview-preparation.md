@@ -103,36 +103,30 @@ function fn(){
    2. Non Primitive(Object) Data Type
 
 2. **Primitive Data Type -** This is pass by value. Means if we assing one variable to other, it will copy the same value. For example -
-```javascript
-let a = 26;
-let b;
-b = a;
-console.log(b); // output will be 26
-```
-   Number, String, BigInt, undefined, null, Boolean and Symbol are primitive data types. Symbol is introduced in ES6, symbols are unique and immutable data types. primary purpose of Symbol is to create guaranteed unique identifiers. Every time you call Symbol(), a completely unique value is generated, even if you pass the exact same description to it
- 
-   ```javascript 
+   ```javascript
+   let a = 26;
+   let b;
+   b = a;
+   console.log(b); // output will be 26
+   ```
+
+   Number, String, BigInt, undefined, null, Boolean and Symbol are primitive data types. Symbol is introduced in ES6, symbols are unique and immutable data types. primary purpose of Symbol is to create guaranteed unique identifiers. Every time you call Symbol(), a completely unique value is generated, even if you pass the exact same description to it.
+
+   ```javascript
    const sym1 = Symbol("id");
    const sym2 = Symbol("id");
 
    console.log(sym1 === sym2); // false
    ```
 
-    ***Important Notes -***
-
-   A. In JavaScript, **null** behaves like a primitive value (e.g., undefined, string, number), but it is actually an **object**. This is widely recognized as a historical bug in the language that has never been fixed to avoid breaking existing code.
-
-   B. ** BigInt ** - Introduced in ES2020, BigInt is a special numeric type in JavaScript that can represent whole numbers of arbitrary size—beyond the limits of the standard Number type (Number.MAX_SAFE_INTEGER). You create BigInt values by appending n to an integer literal or by calling the BigInt() function.
-
-   C. ** typeof null ** - The `typeof null` returning `'object'` is a long-standing bug in JavaScript. It was introduced in the early days of the language and has been maintained for backward compatibility. It does not reflect the actual internal structure of `null`, which is a primitive value.
-
-   D. ** typeof undefined ** - The `typeof undefined` returning `'undefined'` is correct. Undefined is a primitive data type in JavaScript. It is used to represent the absence of a value.
-
-   E. ** typeof BigInt ** - The `typeof BigInt` returning `'bigint'` is correct. BigInt is a primitive data type in JavaScript. It is used to represent the absence of a value.
-
-   F. ** typeof Symbol ** - The `typeof Symbol` returning `'symbol'` is correct. Symbol is a primitive data type in JavaScript. It is used to represent the absence of a value.
-
-   G. ** Auto-boxing ** - Primitives don't have methods, yet you can call methods on them (like "hello".toUpperCase()). When you do this, JavaScript temporarily wraps (auto-boxes) the primitive value into its corresponding Object wrapper, runs the method, and then discards the wrapper.
+   #### **Important Notes:**
+   - **A. `null` as an Object -** In JavaScript, **null** behaves like a primitive value (e.g., undefined, string, number), but it is actually an **object**. This is widely recognized as a historical bug in the language that has never been fixed to avoid breaking existing code.
+   - **B. BigInt -** Introduced in ES2020, BigInt is a special numeric type in JavaScript that can represent whole numbers of arbitrary size—beyond the limits of the standard Number type (`Number.MAX_SAFE_INTEGER`). You create BigInt values by appending `n` to an integer literal or by calling the `BigInt()` function.
+   - **C. `typeof null` -** The `typeof null` returning `'object'` is a long-standing bug in JavaScript. It was introduced in the early days of the language and has been maintained for backward compatibility. It does not reflect the actual internal structure of `null`, which is a primitive value.
+   - **D. `typeof undefined` -** The `typeof undefined` returning `'undefined'` is correct. Undefined is a primitive data type in JavaScript. It is used to represent the absence of a value.
+   - **E. `typeof BigInt` -** The `typeof BigInt` returning `'bigint'` is correct. BigInt is a primitive data type in JavaScript. It is used to represent the absence of a value.
+   - **F. `typeof Symbol` -** The `typeof Symbol` returning `'symbol'` is correct. Symbol is a primitive data type in JavaScript. It is used to represent the absence of a value.
+   - **G. Auto-boxing -** Primitives don't have methods, yet you can call methods on them (like `"hello".toUpperCase()`). When you do this, JavaScript temporarily wraps (auto-boxes) the primitive value into its corresponding Object wrapper, runs the method, and then discards the wrapper.
 
 3. **Non-Primitive(Object) Data Type -** Non-primitive are pass by reference. Means variables are stored in the main memory while values are stored in the heap memory. Both variable and values are connected to pointer. So if we assing one variable to other, it only assign the pointer, don't copy the value.
    Object, Array and functions are non-primitive data type.
